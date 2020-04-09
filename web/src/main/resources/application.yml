@@ -1,0 +1,86 @@
+#这里配置的属性值我们需要映射到person对象里边去，下面这些值基本涵盖了java的数据类型
+#注意lastName == last-name
+person:
+  lastName: zfc
+  age: 18
+  boss: false
+  birth: 2017/12/12
+  maps: {k1: v1,k2: zfc}
+  lists:
+    - lisi
+    - zhaowu
+    - zfc
+  dog:
+    name: 小狗
+    age: 99
+
+#springboot采用jdbc访问数据库时的数据源配置，默认springboot使用的时tomcat的数据源
+#org.apache.tomcat.jdbc.pool.DataSource
+#只要我们配置好了数据源,springboot就会给我们生成一个jdbcTemplate,用于操作数据库
+spring:
+  datasource:
+    username: root
+    password: 123456
+    #url: jdbc:mysql://192.168.43.108:3306/jdbc
+    url: jdbc:mysql://172.20.10.9:3306/jdbc
+
+    driver-class-name: com.mysql.jdbc.Driver
+  #配置jpa的数据库表生成方式
+  jpa:
+    hibernate:
+    #更新或者创建数据表，没有该表就更新，有了就不创建了，如果实体类改变了，那么就更新
+      ddl-auto: update
+    #显示sql语句
+    show-sql: true
+
+
+    #指定建表的数据库sql文件
+#    schema:
+#      - classpath:department.sql
+
+#配置jpa的数据库生成策略
+
+#1、将服务器证书文件server.keystore放到项目的根目录下
+#2、编辑application.yml文件
+#配置服务器的证书文件
+#1、如果客户端想验证服务端证书，客户端需要安装服务端的公钥文件(cer)(或者服务端证书是官方CA颁发的，客户端可以直接联网认证)，因为服务端会将自己的随机数等信息使用自己的私钥加密之后发给客户端，而客户端要想解开这些数据，必须持有服务端的公钥才可以，之后服务端验证通过。
+#2、服务端想验证客户端证书，则需要将客户端的证书的公钥文件放到服务端trustStore信任库中，当客户端请求访问服务端时，会使用自己的私钥加密随机数、ssl版本等信息发送给服务端，服务端只有持有客户端的公钥才能解开这些数据，验证才能通过。
+
+server:
+  ssl:
+    #keyStore密钥库，存放了服务端证书的私钥、公钥和证书。采用pkcs12格式存储
+    #这个证书客户端浏览器在访问服务器时会发送给客户端浏览器
+    key-store: classpath:server.keystore
+    key-store-password: 123456
+    key-alias: server
+    key-store-type: PKCS12
+    # trustStore信任库，存放了服务端信任的客户端证书的公钥文件
+    #服务端如果相信某个客户后端的证书，会把客户端的证书导入信任的证书库
+    #truststore.keystore用于保存受信仍的客户端证书，本项目下client.cer已经放入到了
+    #truststore.keystore证书库，因此客户端安装client.cer就可以了，因为该证书已经导入到了
+    #truststore.keystore
+    #切记在windows下面，客户端证书的安装一定要安装client.p12格式，而不是client.cer
+    client-auth: need
+    protocol: TLS
+    trust-store: classpath:trust.keystore
+    trust-store-password: 123456
+    trust-store-type: JKS
+    trust-store-provider: SUN
+
+#1、kestore(密钥库)和truststore(信任库)的区别：
+#2.Keystore，用来存放服务端证书，可以看成一个放key的库，key就是公钥，私钥，数字签名等组成的一个信息。
+#3.truststore是放服务端信任的客户端证书的一个store，里存放的是只包含公钥的数字证书，代表了可以信任的客户端证书，     而keystore是包含私钥的。
+#信仍库的创建
+#生成服务器的密钥库
+#1 keytool -genkey -v -alias server -keyalg RSA -storetype PKCS12  -keystore  server.keystore，
+#2 生成客户端密钥库,注意这个密钥库的后缀名可以任意，但是windows下只能采用p12后缀
+#keytool -genkey -v -alias client -keyalg RSA -storetype PKCS12 -keystore client.p12
+#3导出客户的数字证书
+#keytool -export -alias client -keystore client.p12 -storetype PKCS12  -rfc -file client.cer
+#4生成服务器存储可信密钥的库
+#keytool -genkey -v -alias trust -keyalg RSA -storetype PKCS12  -keystore  trust.keystore，
+#5将客户端的证书导入到可信密钥库
+#keytool -import -v -file client.cer -keystore trust.keystore
+
+#6书写springboot的配置文件
+#将server.keystore 和trust.keystore放入springboot

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Signin Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"  rel="stylesheet">
+
+
+		<!-- Custom styles for this template -->
+		<link th:href="@{../../clerk/asserts/css/signin.css}" rel="stylesheet">
+
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+		<script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+		<script type="text/javascript" src="../../clerk/dist/distpicker.js"></script>
+
+		<script type="text/javascript">
+        $(document).ready(function(){
+
+            $("#province").attr("data-province","四川省")
+            $("#city").attr("data-city","成都市")
+            $("#county").attr("data-county","双流区")
+            $("#disSelect").distpicker();
+
+			//点击注册按钮触发的事件
+            $("#gosign").click(function(){
+                window.location.href="/clerk/index"
+            });
+
+        })
+
+
+	</script>
+	</head>
+
+	<body class="text-center">
+		<form class="form-signin" th:action="@{/clerk/register}">
+			<img class="mb-4" th:src="@{../../clerk/asserts/img/bootstrap-solid.svg}"  alt="" width="72" height="72">
+			<h1 class="h3 mb-3 font-weight-normal" style="color: red" th:text="${ not #strings.isEmpty(msg)}?${msg}:'请注册'" >请注册</h1>
+			<!--我们需要使用th:if标签判断msg是否为空，为空就不生成-->
+			<div class="input-group">
+				<select name="countrycode"  class="btn btn-info form-control">
+					<option >
+						CN
+					</option>
+					<option >
+						US
+					</option>
+				</select>
+				<span style="width: 70px" class="input-group-btn">国家</span>
+			</div>
+
+			<div id="disSelect">
+					<div class="input-group">
+						<select name="province" class="btn btn-info form-control" id="province" data-province="四川省"></select>
+						<span style="width: 70px" class="input-group-btn">省</span>
+					</div>
+					<div class="input-group">
+						<select name="city" class="btn btn-info form-control" id="city" data-city="成都市"></select>
+						<span style="width: 70px" class="input-group-btn">市</span>
+					</div>
+					<div class="input-group">
+						<select name="county" class="btn btn-info form-control" id="county" data-county="龙泉驿区"></select>
+						<span style="width: 70px" class="input-group-btn">县</span>
+					</div>
+			</div>
+
+
+			<div class="input-group">
+				<input type="email" name="email" class="form-control" placeholder="email" required="">
+				<span style="width: 70px" class="input-group-btn">邮箱</span>
+			</div>
+
+			<div class="input-group">
+				<select name="organization"  class="btn btn-info form-control">
+					<option th:each="ou1:${ou}" th:text="${ou1}">
+					</option>
+				</select>
+				<span style="width: 70px" class="input-group-btn">组织</span>
+			</div>
+
+			<div class="input-group">
+				<input type="text" name="organiztionalcode" class="form-control" placeholder="organiztionalcode" required="">
+				<span style="width: 70px" class="input-group-btn">组织代码</span>
+			</div>
+
+			<div class="input-group">
+				<input type="text" name="department" class="form-control" placeholder="department" required="">
+				<span style="width: 70px" class="input-group-btn">单位</span>
+			</div>
+
+			<div class="input-group">
+				<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
+				<span style="width: 70px" class="input-group-btn" >用户名</span>
+			</div>
+
+			<div class="input-group">
+				<input type="password" name="password" class="form-control" placeholder="Password" required="">
+				<span style="width: 70px" class="input-group-btn">密码</span>
+			</div>
+
+			<div class="input-group">
+				<input type="number" name="telephone" class="form-control" placeholder="telephone" required="">
+				<span style="width: 70px" class="input-group-btn">电话号码</span>
+			</div>
+
+			<div class="input-group">
+				<input type="text" name="address" class="form-control" placeholder="address" required="">
+				<span style="width: 70px" class="input-group-btn">地址</span>
+			</div>
+
+
+			<button style="width: 400px" class="btn btn-sm btn-primary btn-block" type="submit">注册</button>
+			<button style="width: 400px" id="gosign" class="btn btn-sm btn-primary btn-block" >去登录</button>
+			<p class="mt-5 mb-3 text-muted">© 2017-2018</p>
+			<a class="btn btn-sm">中文</a>
+			<a class="btn btn-sm">English</a>
+		</form>
+
+	</body>
+
+</html>

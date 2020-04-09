@@ -1,0 +1,43 @@
+证书的格式由cer和crt两种，当我们获取到一个服务器的证书以后，首先要验证证书的有效性，然后再验证服务器的身份
+1：首先采用CA的公钥验证服务器的证书签名是否有效，如果有效，则代表该用户证书上的公钥确实是该用户的，但是我们仍然不能相信目前所通信服务器是不是证书的拥有者，因此还要验证服务器的身份
+2.服务器发送一个随机数给客户端，如果客户端采用证书上的公钥可以解密消息，则服务器的身份认证通过
+
+因此为了实现双向的身份认证我们需要提前做一些准备，准备好服务器，客户端的数字证书，并且将服务器的证书加入到客户端的受信仍证书库，并且同时将客户端的证书加入到服务端的受信任证书库，这样我们就先假定双方再通信之前就已经相信对方的证书，接下来要做的就只是验证对方的身份就可以了，只要身份认证通过就可以进行双方互通信了
+
+
+
+trust.keystore存放受信仍的客户端证书，只有证书和公钥，不能根据公钥导出私钥
+
+server.keystore存放服务器的私钥，可以根据服务器的私钥导出公钥和数字证书
+
+1）生成服务端私钥，并且导入到服务端KeyStore文件中
+keytool -genkey -alias serverkey  -validity 36500 -keystore kserver.keystore
+2）根据私钥，导出服务端证书，server.crt就是服务端的证书
+keytool -export -alias serverkey -keystore kserver.keystore -file server.crt
+
+3）将服务端证书，导入到客户端的Trust KeyStore中，tclient.keystore是给客户端用的，其中保存着受客户端信任的证书
+keytool -import -alias serverkey -file server.crt -keystore tclient.keystore
+
+采用同样的方法，生成客户端的私钥，客户端的证书，并且导入到服务端的Trust KeyStore中
+
+1）keytool -genkey -alias clientkey -keystore kclient.keystore
+2）keytool -export -alias clientkey -keystore kclient.keystore -file client.crt
+3）keytool -import -alias clientkey -file client.crt -keystore tserver.keystore
+如此一来，生成的文件分成两组
+
+服务端保存：kserver.keystore tserver.keystore
+客户端保存：kclient.keystore  tclient.kyestore
+
+交互原理：
+
+client采用kclient.keystore中的clientkey私钥进行数据加密，发送给server。
+
+server采用tserver.keystore中的client.crt证书（包含了clientkey的公钥）对数据解密，如果解密成功，来自client,进行逻辑处理。
+
+ 
+
+ 
+
+server采用kserver.keystore中的serverkey私钥进行数据加密，发送给client。
+
+client采用tclient.keystore中的server.crt证书（包含了serverkey的公钥）对数据解密，如果解密成功，来自server,进行逻辑处理。

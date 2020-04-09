@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>NUDT</groupId>
+  <artifactId>PKI</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>PKI</name>
+  <modules>
+    <module>web</module>
+    <module>core</module>
+    <module>tsa</module>
+      <module>tcp</module>
+  </modules>
+
+
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <spring-cloud.version>Dalston.SR1</spring-cloud.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <skipTests>false</skipTests>
+    <bc.version>1.60</bc.version>
+
+    <!--//分页的版本-->
+    <mybatis-pagehelper.version>4.1.2</mybatis-pagehelper.version>
+
+    <!--我们需要替换spring-boot-parent给我们指定的themeleaf的版本，因为它指定的本本存在-->
+    <!--html解析问题，所以这里我们修改它默认的把那本-->
+    <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
+    <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
+
+  </properties>
+
+  <!--管理springbbot的所有依赖-->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.12.RELEASE</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--//spring-boot的自动配置类-->
+    <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-autoconfigure</artifactId>
+      </dependency>
+
+    <!--注解需要使用到@ConfigurationProperties(prefix = "person")-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!--日志记录-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+    </dependency>
+
+    <!--访问mysql的驱动，无论是使用原生jdbc还是jpa或者mybatis访问数据库，都是需要驱动的-->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <!--采用原生jdbc数据源，主要用于封装一些连接池等等-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <!--采用JPA访问数据库，底层仍然是采用jdbc-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <!---->
+    <!--原生的jdbc我们在开发的时候很少使用，我们一般使用阿里巴巴的druid数据源-->
+    <!--因此上面的jdbc数据源连接数据库操作只是一个演示，这里我们采用druid，这里引入驱动-->
+    <!-- https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter -->
+
+
+
+
+    <!--引入jquery公共资源-->
+      <dependency>
+          <groupId>org.webjars</groupId>
+          <artifactId>jquery</artifactId>
+          <version>3.4.1</version>
+      </dependency>
+
+    <!--bootstrap公共资源-->
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>4.4.1</version>
+    </dependency>
+
+    <!--jquery-easyui公共资源的引入 -->
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>jquery-easyui</artifactId>
+      <version>1.5.21</version>
+    </dependency>
+
+
+    <!--日志处理的相关类-->
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.3</version>
+    </dependency>
+
+
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+      <plugins>
+        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

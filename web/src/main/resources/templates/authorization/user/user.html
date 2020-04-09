@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	<link rel="stylesheet" href="../../../authorization/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../../authorization/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../../authorization/css/main.css">
+	<style>
+	.tree li {
+        list-style-type: none;
+		cursor:pointer;
+	}
+	table tbody tr:nth-child(odd){background:#F4F4F4;}
+	table tbody td:nth-child(even){color:#C00;}
+	</style>
+
+
+  </head>
+
+  <body>
+
+    <div th:replace="~{authorization/common/header::header}"></div>
+
+
+    <div class="container-fluid">
+      <div class="row">
+
+		<div th:replace="~{authorization/common/sidebar::sidebar}"></div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 数据列表</h3>
+			  </div>
+			  <div class="panel-body">
+<form class="form-inline" role="form" style="float:left;">
+  <div class="form-group has-feedback">
+    <div class="input-group">
+      <div class="input-group-addon">查询条件</div>
+      <input id="queryText" class="form-control has-success" type="text" placeholder="请输入查询条件">
+    </div>
+  </div>
+  <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
+</form>
+<button type="button" class="btn btn-danger" onclick="deleteUsers()" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
+<button id="toAddUserPage" type="button" class="btn btn-primary" style="float:right;" ><i class="glyphicon glyphicon-plus"></i> 新增</button>
+<br>
+ <hr style="clear:both;">
+          <div class="table-responsive">
+            <form id="userForm">
+            <table class="table  table-bordered">
+                <thead>
+                <tr>
+                    <th>个体编号</th>
+                    <th width="30"><input type="checkbox" id="allSelBox"></th>
+                    <th>个体别名</th>
+                    <th>国家</th>
+                    <th>省</th>
+                    <th>城市</th>
+                    <th>邮件</th>
+                    <th>组织</th>
+                    <th>部门</th>
+                    <th>电话</th>
+                    <th>状态</th>
+                    <th width="100">操作</th>
+                </tr>
+                </thead>
+              
+              <tbody id="userData">
+              <tr th:each="staff:${staffs}">
+                  <td th:text="${staff.id}"></td>
+                  <td><input type="checkbox"></td>
+                  <td th:text="${staff.username}"></td>
+                  <td th:text="${staff.countrycode}"></td>
+                  <td th:text="${staff.province}"></td>
+                  <td th:text="${staff.city}"></td>
+                  <td >[[${staff.email}]]</td>
+                  <td th:text="${staff.organization}"></td>
+                  <td th:text="${staff.department}"></td>
+                  <td th:text="${staff.telephone}"></td>
+                  <td th:text="${staff.code}==0?'审核未通过':'审核通过'">
+                  <td>
+                      <button  type="button" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>
+                      <button type="button" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>
+                      <button type="button" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>
+                  </td>
+              </tr>
+              </tbody>
+              
+			  <tfoot>
+			     <tr >
+				     <td colspan="12" align="center">
+                         <ul class="pagination">
+                             <li th:if="${pageno} ge '1'"><a href="#" th:onclick="'javascript:changePageno('+${pageno-1}+');'">上一页</a></li>
+                         <th:block th:each="current:${#numbers.sequence(0,totalno)}">
+                             <li th:if ="${pageno} eq ${current}" class="active"><a href="#">[[${current}]]</a></li>
+                             <li th:if="${pageno} ne ${current}" ><a href="#" th:onclick="'javascript:changePageno('+${current}+');'">[[${current}]]</a></li>
+                         </th:block>
+                             <li th:if="${pageno} lt ${totalno}"><a href="#" th:onclick="'javascript:changePageno('+${pageno+1}+');'">下一页</a></li>
+                         </ul>
+					 </td>
+				 </tr>
+
+			  </tfoot>
+            </table>
+            </form>
+          </div>
+			  </div>
+			</div>
+        </div>
+      </div>
+    </div>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script src="../../../authorization/jquery/jquery-2.1.1.min.js"></script>
+    <script src="../../../authorization/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../../authorization/script/docs.min.js"></script>
+	<script src="../../../authorization/layer/layer.js"></script>
+        <script type="text/javascript">
+            var likeflg = false;
+            $(function () {
+			    $(".list-group-item").click(function(){
+				    if ( $(this).find("ul") ) {
+						$(this).toggleClass("tree-closed");
+						if ( $(this).hasClass("tree-closed") ) {
+							$("ul", this).hide("fast");
+						} else {
+							$("ul", this).show("fast");
+						}
+					}
+				});
+			    
+			    pageQuery(1);
+			    
+			    $("#queryBtn").click(function(){
+			    	var queryText = $("#queryText").val();
+			    	if ( queryText == "" ) {
+			    		likeflg = false;
+			    	} else {
+			    		likeflg = true;
+			    	}
+			    	
+			    	pageQuery(0);
+			    });
+			    
+			    $("#allSelBox").click(function(){
+			    	var flg = this.checked;
+			    	
+			    	$("#userData :checkbox").each(function(){
+			    		this.checked = flg;
+			    	});
+			    });
+            });
+            $("tbody .btn-success").click(function(){
+                window.location.href = "assignRole.html";
+            });
+            $("tbody .btn-primary").click(function(){
+                window.location.href = "edit.html";
+            });
+            
+            function  changePageno(pageno) {
+               window.location.href="/st/user?pageno="+pageno
+            }
+            
+            // 分页查询
+            function pageQuery( pageno ) {
+            	var loadingIndex = null;
+
+            	var jsonData = {"pageno" : pageno, "pagesize" : 2};
+            	//需要模糊查询
+            	if ( likeflg == true ) {
+            		jsonData.queryText = $("#queryText").val();
+            	}
+
+            	$.ajax({
+            		type : "POST",
+            		url  : "/st/pageQuery",
+            		data : jsonData,
+            		beforeSend : function(){
+            			loadingIndex = layer.msg('处理中', {icon: 16});
+            		},
+            		success : function(result) {
+            			layer.close(loadingIndex);
+            			if ( result.success ) {
+            				// 局部刷新页面数据
+            				var tableContent = "";
+            				var pageContent = "";
+                            var zi="";
+
+            				var userPage = result.data;
+            				var staffs = userPage.datas;
+
+            				$.each(staffs, function(i, staff){
+            	                tableContent += '<tr>';
+	          	                tableContent += '  <td>'+(staff.id)+'</td>';
+	          					tableContent += '  <td><input type="checkbox" name="userid" value="'+staff.id+'"></td>';
+	          	                tableContent += '  <td>'+staff.username+'</td>';
+	          	                tableContent += '  <td>'+staff.countrycode+'</td>';
+                                tableContent += '  <td>'+staff.province+'</td>';
+                                tableContent += '  <td>'+staff.city+'</td>';
+                                tableContent += '  <td>'+staff.email+'</td>';
+                                tableContent += '  <td>'+staff.organization+'</td>';
+                                tableContent += '  <td>'+staff.department+'</td>';
+                                tableContent += '  <td>'+staff.telephone+'</td>';
+                                tableContent += '  <td >'+staff.code+'</td>';
+	          	                tableContent += '  <td>';
+	          					tableContent += '      <button type="button" onclick="goAssignPage('+staff.id+')" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>';
+	          					tableContent += '      <button type="button" onclick="goUpdatePage('+staff.id+')" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>';
+	          					tableContent += '	  <button type="button" onclick="deleteUser('+staff.id+', \''+staff.username+'\')" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>';
+	          					tableContent += '  </td>';
+	          	                tableContent += '</tr>';
+            				});
+
+            				if ( pageno >= 1 ) {
+            					pageContent += '<li><a href="#" onclick="pageQuery('+(pageno-1)+')">上一页</a></li>';
+            				}
+
+            				for ( var i = 0; i < userPage.totalno; i++ ) {
+            					if ( i == pageno ) {
+            						pageContent += '<li class="active"><a  href="#">'+i+'</a></li>';
+            					} else {
+            						pageContent += '<li ><a href="#" onclick="pageQuery('+i+')">'+i+'</a></li>';
+            					}
+            				}
+
+            				if ( pageno < userPage.totalno ) {
+            					pageContent += '<li><a href="#" onclick="pageQuery('+(pageno+1)+')">下一页</a></li>';
+            				}
+
+            				$("#userData").html(tableContent);
+            				$(".pagination").html(pageContent);
+            			} else {
+                            layer.msg("用户信息分页查询失败", {time:2000, icon:5, shift:6}, function(){
+
+                            });
+            			}
+            		}
+            	});
+            }
+            
+            function goUpdatePage(id) {
+            	window.location.href = "/st/toEditPage?id="+id;
+            }
+            
+            function goAssignPage(id) {
+            	window.location.href = "/st/assign?id="+id;
+            }
+            
+
+            function deleteUsers() {
+            	var boxes = $("#userData :checkbox");
+            	if ( boxes.length == 0 ) {
+                    layer.msg("请选择需要删除的用户信息", {time:2000, icon:5, shift:6}, function(){
+                    	
+                    });
+            	} else {
+        			layer.confirm("删除选择的用户信息, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+        				// 删除选择的用户信息
+        				$.ajax({
+        					type : "POST",
+        					url  : "/st/deletes",
+        					data : $("#userForm").serialize(),
+        					success : function(result) {
+        						if ( result.success ) {
+        							pageQuery(1);
+        						} else {
+                                    layer.msg("用户信息删除失败", {time:2000, icon:5, shift:6}, function(){
+                                    	
+                                    });
+        						}
+        					}
+        				});
+        				
+        				layer.close(cindex);
+        			}, function(cindex){
+        			    layer.close(cindex);
+        			});
+            	}
+            }
+            
+            function deleteUser( id, username ) {
+    			layer.confirm("删除用户信息【"+username+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+    			    
+    				// 删除用户信息
+    				$.ajax({
+    					type : "POST",
+    					url  : "/st/delete",
+    					data : { id : id },
+    					success : function(result) {
+    						if ( result.success ) {
+    							pageQuery(1);
+    						} else {
+                                layer.msg("用户信息删除失败", {time:2000, icon:5, shift:6}, function(){
+                                	
+                                });
+    						}
+    					}
+    				});
+    				
+    				layer.close(cindex);
+    			}, function(cindex){
+    			    layer.close(cindex);
+    			});
+            }
+        </script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#toAddUserPage").click(function () {
+                window.location.href="/st/toAddUserPage";
+            });
+
+
+        })
+
+
+    </script>
+  </body>
+</html>
