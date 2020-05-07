@@ -31,4 +31,7 @@ public interface StaffRepository  extends JpaRepository<Staff,Integer>{
     //批量删除
     public void deleteByIdIn(List<Integer> ids);
 
+
+    public List<Staff> findAllByIdIn(List<Integer> ids);
+
 }

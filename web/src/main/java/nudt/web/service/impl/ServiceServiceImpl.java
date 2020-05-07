@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 public class ServiceServiceImpl implements ServiceService {
@@ -15,9 +17,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Transactional
     @Override
-    public void save(nudt.web.entity.Service service) {
+    public nudt.web.entity.Service save(nudt.web.entity.Service service) {
 
-        serviceRepository.save(service);
+        return  serviceRepository.save(service);
     }
 
     @Override
@@ -28,5 +30,10 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Integer findServiceIdByServiceName(String serviceName) {
        return serviceRepository.findServiceByServiceName(serviceName).getSid();
+    }
+
+    @Override
+    public List<nudt.web.entity.Service> findAll() {
+        return serviceRepository.findAll();
     }
 }

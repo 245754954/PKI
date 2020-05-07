@@ -50,4 +50,10 @@ public class RolePermissionServiceImpl implements RolePermissionService {
 
         return pids;
     }
+
+    @Override
+    @Transactional
+    public void deleteAllByRid(Integer roleid) {
+        rolePermissionRepository.deleteAllByRid(roleid);
+    }
 }

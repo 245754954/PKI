@@ -24,7 +24,7 @@
 <body>
 <div class="tree">
  <ul th:fragment="menubar" style="padding-left:0px;" class="list-group">
-    <th:block th:each="permission:${rootPermission.children}">
+    <th:block th:if="${rootPermission} ne null" th:each="permission:${rootPermission.children}">
 
             <li th:if="${permission.children} eq null" class="list-group-item tree-closed" >
                 <a th:href="${permission.url}" ><i class="glyphicon glyphicon-dashboard"></i>[[${permission.name}]]</a>

@@ -5,6 +5,7 @@ import nudt.web.entity.*;
 import nudt.web.service.*;
 import nudt.web.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,19 +44,44 @@ public class ServiceController
     @Autowired
     RolePermissionService rolePermissionService;
 
+    @Autowired
+    StaffService staffService;
+
+    @Autowired
+    ServiceStaffService serviceStaffService;
 
 
-    //接受注册请求
+    @Autowired
+    ServicePermissionService servicePermissionService;
+
+    //接受业务系统的注册，此时还应该为注册的业务系统开辟一个权限父菜单
     @RequestMapping(value = "/register",method = {RequestMethod.POST,RequestMethod.GET})
     public String register(HttpServletRequest request, Service service){
+
         if(serviceService.findServiceByServiceName(service.getServiceName())!=null)
         {
             return "/service/login";
         }
         String ip  = RequestUtil.getUserIP(request);
         service.setServiceIP(ip);
+        //保存业务
+        service = serviceService.save(service);
 
-        serviceService.save(service);
+        Permission p = new Permission();
+        p.setChecked(true);
+        p.setIcon("glyphicon glyphicon-user");
+        p.setOpen(true);
+        p.setPid(0);
+        p.setName(service.getServiceName());
+        //保存权限父菜单
+        p = permissionService.save(p);
+
+
+        //保存业务系统和权限之间的关系
+        ServicePermission servicePermission = new ServicePermission();
+        servicePermission.setPermissionId(p.getId());
+        servicePermission.setServiceId(service.getSid());
+        servicePermissionService.save(servicePermission);
 
         return "/service/login";
     }
@@ -152,29 +178,141 @@ public class ServiceController
     @ResponseBody
     @RequestMapping(value = "/getMenu",method = {RequestMethod.POST,RequestMethod.GET})
     public List Menu(HttpSession session,HttpServletRequest request, Service service){
-        List<Permission> permissions = permissionService.findAll();
+        String serviceName = (String)session.getAttribute("serviceName");
+
+        Service service1 = serviceService.findServiceByServiceName(serviceName);
+        List<Integer> serviceids = new ArrayList<>();
+        serviceids.add(service1.getSid());
+        List<Integer> pids = servicePermissionService.findPermissionIdsByServiceIDs(serviceids);
+
+
+        List<Permission> permissions = permissionService.findPermissionsByPid(pids);
         return permissions;
     }
 
     //给某个角色分配权限的页面，并且需要标记出已经分配给该角色的权限，同时列出未分配的权限
     @RequestMapping(value = "/toRolePermissionPage",method = {RequestMethod.POST,RequestMethod.GET})
-    public String toRolePermissionPage(HttpSession session,HttpServletRequest request, Service service){
-
+    public String toRolePermissionPage(Model model,HttpSession session,HttpServletRequest request, Service service,@RequestParam("role_id")Integer role_id){
+            model.addAttribute("role_id",role_id);
             return "/service/system/rolePermission";
     }
 
 
     @ResponseBody
     @RequestMapping(value = "/getPermissionWithRole",method = {RequestMethod.POST,RequestMethod.GET})
-    public Map<String, Object> getPermissionWithRole(@RequestParam("role_id")String role_id
-            ,HttpSession session,HttpServletRequest request, Service service){
-        //找到所有的权限
+    public Map<String, Object> getPermissionWithRole(
+            HttpSession session,HttpServletRequest request, Service service,@RequestParam("role_id")Integer role_id){
+        //找到本角色隶属于哪一个业务系统，找到业务系统的id
+        List<Integer> serviceIds = serviceRoleService.findServiceIdsByRoleId(role_id);
+        List<Integer> pids = servicePermissionService.findPermissionIdsByServiceIDs(serviceIds);
+        //找到次业务系统下面的权限信息
         HashMap<String,Object> map = new HashMap<>();
-        List<Permission> permissions = permissionService.findAll();
+        List<Permission> permissions = permissionService.findPermissionsByPid(pids);
         map.put("menus",permissions);
         return map;
     }
 
+
+
+    //根据业务系统的名称来查询该业务系统下的用户名
+    @ResponseBody
+    @RequestMapping("/getStaffByServiceName")
+    public Object getStaffByServiceName(Model model,String queryText, Integer pageno, Integer pagesize )
+    {
+        AJAXResult result = new AJAXResult();
+        if(""==queryText||null==queryText)
+        {
+            try {
+
+                // 分页查询
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("start", (pageno-1)*pagesize);
+                map.put("size", pagesize);
+                map.put("queryText", queryText);
+
+                org.springframework.data.domain.Page<Staff> page = staffService.findAll(new PageRequest(pageno,pagesize));
+
+                List<Staff> staffs = page.getContent();// 当前页码
+
+                // 总的数据条数
+                long totalsize = staffService.countAll();
+                // 最大页码（总页码）
+                long totalno = 0;
+                if ( totalsize % pagesize == 0 ) {
+                    totalno = totalsize / pagesize;
+                } else {
+                    totalno = totalsize / pagesize + 1;
+                }
+
+                // 分页对象
+                nudt.web.entity.Page<Staff> staffPage = new nudt.web.entity.Page<Staff>();
+                staffPage.setDatas(staffs);
+                staffPage.setTotalno(Integer.parseInt(totalno+""));
+                staffPage.setTotalsize(Integer.parseInt(totalsize+""));
+                staffPage.setPageno(pageno);
+
+                result.setData(staffPage);
+                result.setSuccess(true);
+            } catch ( Exception e ) {
+                e.printStackTrace();
+                result.setSuccess(false);
+            }
+
+
+
+            return result;
+
+
+        }else{
+            try {
+
+                // 分页查询
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("start", (pageno-1)*pagesize);
+                map.put("size", pagesize);
+                map.put("queryText", queryText);
+
+                //首先
+                Service service = serviceService.findServiceByServiceName(queryText);
+                Integer serviceID = service.getSid();
+
+                List<Integer> staffids = serviceStaffService.findAllByServiceId(serviceID);
+
+
+
+
+                List<Staff> staffs = staffService.findAllByIdIn(staffids);
+
+
+
+                // 总的数据条数
+                long totalsize = staffs.size();
+                // 最大页码（总页码）
+                long totalno = 0;
+                if ( totalsize % pagesize == 0 ) {
+                    totalno = totalsize / pagesize;
+                } else {
+                    totalno = totalsize / pagesize + 1;
+                }
+
+                // 分页对象
+                nudt.web.entity.Page<Staff> staffPage = new nudt.web.entity.Page<Staff>();
+                staffPage.setDatas(staffs);
+                staffPage.setTotalno(Integer.parseInt(totalno+""));
+                staffPage.setTotalsize(Integer.parseInt(totalsize+""));
+                staffPage.setPageno(pageno);
+
+                result.setData(staffPage);
+                result.setSuccess(true);
+            } catch ( Exception e ) {
+                e.printStackTrace();
+                result.setSuccess(false);
+            }
+
+            return result;
+
+        }
+    }
 
 
 
@@ -302,11 +440,15 @@ public class ServiceController
 
     //去业务系统添加权限菜单页面
     @RequestMapping(value = "/toAddMenuPage",method = {RequestMethod.POST,RequestMethod.GET})
-    public String toAddMenuPage(HttpServletRequest request, Service service){
+    public String toAddMenuPage(HttpSession session,HttpServletRequest request, Service service){
+
+
         return "/service/system/menus";
     }
+
+
     @RequestMapping(value = "/toRoleManagePage",method = {RequestMethod.POST,RequestMethod.GET})
-    public String toRoleManagePage(@RequestParam("role_id")Integer role_id,HttpSession session,HttpServletRequest request, Service service){
+    public String toRoleManagePage(HttpSession session,HttpServletRequest request, Service service){
        String serviceName = (String)session.getAttribute("serviceName");
        if(null==serviceName)
        {
@@ -317,6 +459,9 @@ public class ServiceController
 
 
         request.setAttribute("serviceName",serviceName);
+
+
+
         return "/service/system/roleManage";
     }
     @RequestMapping(value = "/toNorthPage",method = {RequestMethod.POST,RequestMethod.GET})

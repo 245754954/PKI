@@ -84,9 +84,17 @@
 			</div>
 
 			<div class="input-group">
-				<input type="text" name="organiztionalcode" class="form-control" placeholder="organiztionalcode" required="">
-				<span style="width: 70px" class="input-group-btn">组织代码</span>
+				<select name="serviceName"  class="btn btn-info form-control">
+					<option th:each="service:${services}" th:text="${service}">
+					</option>
+				</select>
+				<span style="width: 70px" class="input-group-btn">隶属系统</span>
 			</div>
+
+			<!--<div class="input-group">-->
+				<!--<input type="text" name="organiztionalcode" class="form-control" placeholder="organiztionalcode" required="">-->
+				<!--<span style="width: 70px" class="input-group-btn">组织代码</span>-->
+			<!--</div>-->
 
 			<div class="input-group">
 				<input type="text" name="department" class="form-control" placeholder="department" required="">

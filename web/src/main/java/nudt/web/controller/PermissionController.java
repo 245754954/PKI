@@ -1,18 +1,22 @@
 package nudt.web.controller;
 
 
-import nudt.web.entity.AJAXResult;
-import nudt.web.entity.Permission;
-import nudt.web.entity.RolePermission;
+import nudt.web.entity.*;
 import nudt.web.service.PermissionService;
 import nudt.web.service.RolePermissionService;
+import nudt.web.service.ServicePermissionService;
+import nudt.web.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +31,12 @@ public class PermissionController {
 
     @Autowired
     RolePermissionService rolePermissionService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    ServicePermissionService servicePermissionService;
 
 
     @RequestMapping(value = "/permission",method = {RequestMethod.POST,RequestMethod.GET})
@@ -243,4 +253,58 @@ public class PermissionController {
 
         return permissions;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/isExistPermission",method = {RequestMethod.POST,RequestMethod.GET})
+    public Map isExistPermission(@RequestParam("pname")String pname)
+    {
+            Map returnMap = new HashMap();
+
+            Permission p = permissionService.findPermissionByName(pname);
+            if(p!=null)
+            {
+                returnMap.put("resultCode", 010);
+                returnMap.put("msg", "权限已经存在");
+            }
+            else
+            {
+                returnMap.put("resultCode", 000);
+                returnMap.put("msg", "权限不存在");
+            }
+            return returnMap;
+    }
+
+    //创建一个权限的相关信息
+
+    @RequestMapping(value = "/createInfo",method = {RequestMethod.POST,RequestMethod.GET})
+    public String  createInfo(HttpSession session, @RequestParam("pcode") Integer pcode,@RequestParam("name")String name,@RequestParam("url")String url)
+    {
+
+
+        String serviceName = (String) session.getAttribute("serviceName");
+
+        Service service =serviceService.findServiceByServiceName(serviceName);
+
+        Permission permission = new Permission();
+
+        permission.setPid(pcode);
+        permission.setUrl(url);
+        permission.setName(name);
+        permission.setOpen(true);
+        permission.setChecked(true);
+        permission.setIcon("glyphicon glyphicon-user");
+        permission = permissionService.save(permission);
+
+        //保存权限和业务系统之间的关系
+        ServicePermission sp = new ServicePermission();
+        sp.setServiceId(service.getSid());
+        sp.setPermissionId(permission.getId());
+
+        servicePermissionService.save(sp);
+        return "redirect:/ser/toAddMenuPage";
+    }
+
+
+
+
 }

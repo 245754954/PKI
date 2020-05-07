@@ -89,11 +89,46 @@
                 var roleid = $("#rid").val();
             	var treeObj = $.fn.zTree.getZTreeObj("permissionTree");
             	var nodes = treeObj.getCheckedNodes(true);
-            	if ( nodes.length == 0 ) {
-                    layer.msg("请选择需要分配的许可信息", {time:2000, icon:5, shift:6}, function(){
-                    	
+            	if ( nodes.length == 0 )
+            	{
+                    layer.confirm("是否撤销已经分配的权限?", {
+                        btn: ['是','否'] //按钮
+                        ,cancel: function(index, layero){
+                            //取消操作，点击右上角的X
+                             layer.closeAll('dialog');
+                        }
+                    },
+
+                    function()
+                    {//是
+                        layer.closeAll('dialog');
+                        //取消该角色已经拥有的所有权限信息
+                        $.ajax({
+                            type : "POST",
+                            url  : "/role/revokePermission?role_id="+$("#rid").val(),
+                            success : function (result) {
+                                if ( result ) {
+                                    layer.msg("撤销许可信息成功", {time:2000, icon:6}, function(){
+
+                                    });
+                                } else {
+                                    layer.msg("撤销许可信息失败", {time:2000, icon:5, shift:6}, function(){
+
+                                    });
+                                }
+                            }
+                        });
+
+
+                    },
+
+                    function()
+                    {//否
+                        layer.closeAll('dialog');
                     });
-            	} else {
+
+            	} else
+            	{
             		var d = "roleid="+roleid;
             		$.each(nodes, function(i, node){
             			d += "&permissionids="+node.id
@@ -106,7 +141,7 @@
             			success : function (result) {
             				if ( result ) {
                                 layer.msg("分配许可信息成功", {time:2000, icon:6}, function(){
-                                	
+
                                 });
             				} else {
                                 layer.msg("分配许可信息失败", {time:2000, icon:5, shift:6}, function(){

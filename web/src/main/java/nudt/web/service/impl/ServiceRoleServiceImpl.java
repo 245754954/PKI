@@ -42,4 +42,18 @@ public class ServiceRoleServiceImpl implements ServiceRoleService {
     public void deleteByRid(Integer rid) {
         serviceRoleRepository.deleteByRid(rid);
     }
+
+    @Override
+    public List<Integer> findServiceIdsByRoleId(Integer roleid) {
+        List<ServiceRole> serviceRoles = serviceRoleRepository.findServiceRolesByRid(roleid);
+
+        List<Integer> serviceids = new ArrayList<>();
+
+        for(ServiceRole serviceRole:serviceRoles)
+        {
+            serviceids.add(serviceRole.getSid());
+        }
+
+        return  serviceids;
+    }
 }

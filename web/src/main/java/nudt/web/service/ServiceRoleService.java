@@ -11,4 +11,7 @@ public interface ServiceRoleService {
         public List<Integer> findRidsByServiceID(Integer sid);
 
         public void deleteByRid(Integer rid);
+
+        public  List<Integer> findServiceIdsByRoleId(Integer roleid);
+
 }

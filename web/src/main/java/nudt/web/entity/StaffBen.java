@@ -17,13 +17,16 @@ public class StaffBen {
     //城市
     private String city;
 
+    private String county;
+
     //邮箱
     private String email;
 
     //组织
     private String organization;
-    //组织代码
-    private String organiztionalcode;
+
+    //隶属的业务系统
+    private String serviceName;
 
     //单位
     private String department;

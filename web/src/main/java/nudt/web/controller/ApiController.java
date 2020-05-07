@@ -666,46 +666,54 @@ public class ApiController {
         }
         //根据用户名查询用户角色，根据角色查询用户权限，能够查询到登录用户的全部权限信息
         Staff staff1 = staffService.findStaffByUsername(username);
-        Integer sid = staff1.getId();
-        //根据sid获取用户角色集合
-        List<Integer> rids =staffRoleService.findRidsBySid(sid);
-        //根据角色找到权限的集合信息
-        List<Integer> pids = rolePermissionService.findPidsByRids(rids);
-        //找到用户的所有的权限信息
-        List<Permission> permissions = permissionService.findPermissionsByPid(pids);
+        if(staff1!=null)
+        {
+            Integer sid = staff1.getId();
+            //根据sid获取用户角色集合
+            List<Integer> rids =staffRoleService.findRidsBySid(sid);
+            //根据角色找到权限的集合信息
+            List<Integer> pids = rolePermissionService.findPidsByRids(rids);
+            //找到用户的所有的权限信息
+            List<Permission> permissions = permissionService.findPermissionsByPid(pids);
 
-        //将所有的权限保存到session
-        Map<Integer, Permission> permissionMap = new HashMap<Integer, Permission>();
+            //将所有的权限保存到session
+            Map<Integer, Permission> permissionMap = new HashMap<Integer, Permission>();
 
-        Permission root = null;
+            Permission root = null;
 
-        for ( Permission permission : permissions ) {
-            //将用户所有的permission都放入map里边
-            permissionMap.put(permission.getId(), permission);
-        }
-
-        for ( Permission permission : permissions ) {
-            //把每一个permission都作为child
-            Permission child = permission;
-            if ( child.getPid() == 0 ) {
-                //如果permission的pid为0，那么就代表根节点
-                root = permission;
-            } else {
-                //否则就作为子节点
-                Permission parent = permissionMap.get(child.getPid());
-                //将子节点加入父节点
-                parent.getChildren().add(child);
+            for ( Permission permission : permissions ) {
+                //将用户所有的permission都放入map里边
+                permissionMap.put(permission.getId(), permission);
             }
+
+            for ( Permission permission : permissions ) {
+                //把每一个permission都作为child
+                Permission child = permission;
+                if ( child.getPid() == 0 ) {
+                    //如果permission的pid为0，那么就代表根节点
+                    root = permission;
+                } else {
+                    //否则就作为子节点
+                    Permission parent = permissionMap.get(child.getPid());
+                    //将子节点加入父节点
+                    parent.getChildren().add(child);
+                }
+            }
+
+            if(root==null)
+            {
+                root = new Permission();
+            }
+            model.addAttribute("rootPermission",root);
+
+            Cert cert = certService.findCertByUsername(username);
+            Staff staff = staffService.findStaffByUsername(username);
+
+            map.put("cert",cert);
+            map.put("staff",staff);
         }
 
 
-        model.addAttribute("rootPermission",root);
-
-        Cert cert = certService.findCertByUsername(username);
-        Staff staff = staffService.findStaffByUsername(username);
-
-        map.put("cert",cert);
-        map.put("staff",staff);
         return "cert/personalcenter";
     }
 

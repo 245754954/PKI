@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+      <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+      <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
 	<link rel="stylesheet" href="../../../authorization/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="../../../authorization/css/font-awesome.min.css">
 	<link rel="stylesheet" href="../../../authorization/css/main.css">
@@ -20,6 +21,104 @@
 	table tbody td:nth-child(even){color:#C00;}
 	</style>
 
+      <script type="text/JavaScript">
+         $(document).ready(function () {
+
+
+             $("#pid").change(function(){
+                 var serviceName=$("#pid").val();
+                 // 分页查询
+                 var pageno=0;
+
+                 getStaffsByServiceName( pageno );
+
+
+
+
+
+                 function getStaffsByServiceName( pageno ) {
+                     var loadingIndex = null;
+
+                     var jsonData = {"pageno" : pageno, "pagesize" : 2};
+                     //需要模糊查询
+                     jsonData.queryText = serviceName;
+
+
+                     $.ajax({
+                         type : "POST",
+                         url  : "/ser/getStaffByServiceName",
+                         data : jsonData,
+                         beforeSend : function(){
+                             loadingIndex = layer.msg('处理中', {icon: 16});
+                         },
+                         success : function(result) {
+                             layer.close(loadingIndex);
+                             if ( result.success ) {
+                                 // 局部刷新页面数据
+                                 var tableContent = "";
+                                 var pageContent = "";
+                                 var zi="";
+
+                                 var userPage = result.data;
+                                 var staffs = userPage.datas;
+
+                                 $.each(staffs, function(i, staff){
+                                     tableContent += '<tr>';
+                                     tableContent += '  <td>'+(staff.id)+'</td>';
+                                     tableContent += '  <td><input type="checkbox" name="userid" value="'+staff.id+'"></td>';
+                                     tableContent += '  <td>'+staff.username+'</td>';
+                                     tableContent += '  <td>'+staff.countrycode+'</td>';
+                                     tableContent += '  <td>'+staff.province+'</td>';
+                                     tableContent += '  <td>'+staff.city+'</td>';
+                                     tableContent += '  <td>'+staff.email+'</td>';
+                                     tableContent += '  <td>'+staff.organization+'</td>';
+                                     tableContent += '  <td>'+staff.department+'</td>';
+                                     tableContent += '  <td>'+staff.telephone+'</td>';
+                                     tableContent += '  <td >'+staff.code+'</td>';
+                                     tableContent += '  <td>';
+                                     tableContent += '      <button type="button" onclick="goAssignPage('+staff.id+')" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>';
+                                     tableContent += '      <button type="button" onclick="goUpdatePage('+staff.id+')" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>';
+                                     tableContent += '	  <button type="button" onclick="deleteUser('+staff.id+', \''+staff.username+'\')" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>';
+                                     tableContent += '  </td>';
+                                     tableContent += '</tr>';
+                                 });
+
+                                 if ( pageno >= 1 ) {
+                                     pageContent += '<li><a href="#" onclick="pageQuery('+(pageno-1)+')">上一页</a></li>';
+                                 }
+
+                                 for ( var i = 0; i < userPage.totalno; i++ ) {
+                                     if ( i == pageno ) {
+                                         pageContent += '<li class="active"><a  href="#">'+i+'</a></li>';
+                                     } else {
+                                         pageContent += '<li ><a href="#" onclick="pageQuery('+i+')">'+i+'</a></li>';
+                                     }
+                                 }
+
+                                 if ( pageno < userPage.totalno ) {
+                                     pageContent += '<li><a href="#" onclick="pageQuery('+(pageno+1)+')">下一页</a></li>';
+                                 }
+
+                                 $("#userData").html(tableContent);
+                                 $(".pagination").html(pageContent);
+                             } else {
+                                 layer.msg("用户信息分页查询失败", {time:2000, icon:5, shift:6}, function(){
+
+                                 });
+                             }
+                         }
+                     });
+                 }
+
+
+
+
+
+
+
+             });
+         });
+      </script>
 
   </head>
 
@@ -48,6 +147,14 @@
   </div>
   <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
 </form>
+ <div style="float:right;" >
+     <select id="pid" name="serviceName"  class="btn btn-info form-control">
+              <option th:each="service:${services}" th:text="${service}" th:value="${service}">
+              </option>
+     </select>
+     <span style="width: 40px" class="input-group-btn">隶属系统</span>
+ </div>
+
 <button type="button" class="btn btn-danger" onclick="deleteUsers()" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
 <button id="toAddUserPage" type="button" class="btn btn-primary" style="float:right;" ><i class="glyphicon glyphicon-plus"></i> 新增</button>
 <br>

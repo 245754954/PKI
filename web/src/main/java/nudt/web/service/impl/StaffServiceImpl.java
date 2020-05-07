@@ -17,6 +17,7 @@ public class StaffServiceImpl implements StaffService {
     StaffRepository staffRepository;
 
     @Override
+    @Transactional
     public Staff save(Staff staff) {
         Staff save = staffRepository.save(staff);
         return save;
@@ -63,6 +64,11 @@ public class StaffServiceImpl implements StaffService {
     @Transactional
     public void deleteByIdIn(List<Integer> ids) {
         staffRepository.deleteByIdIn(ids);
+    }
+
+    @Override
+    public List<Staff> findAllByIdIn(List<Integer> ids) {
+        return staffRepository.findAllByIdIn(ids);
     }
 
 

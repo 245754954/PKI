@@ -15,4 +15,7 @@ public interface ServiceRoleRepository extends JpaRepository<ServiceRole,Integer
 
     public void deleteByRid(Integer rid);
 
+
+    public List<ServiceRole> findServiceRolesByRid(Integer roleid);
+
 }

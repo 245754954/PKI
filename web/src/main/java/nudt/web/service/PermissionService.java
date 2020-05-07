@@ -20,4 +20,7 @@ public interface PermissionService {
     public void deletePermissionById(Integer id);
 
     public List<Permission> findPermissionsByPid(List<Integer> pids);
+
+
+    public Permission save(Permission permission);
 }

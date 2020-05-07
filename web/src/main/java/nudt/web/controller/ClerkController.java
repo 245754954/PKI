@@ -7,11 +7,10 @@ import nudt.web.anno.UserNotExistException;
 import nudt.web.config.AppConfig;
 import nudt.web.dao.DepartmentDao;
 import nudt.web.dao.EmployeeDao;
-import nudt.web.entity.Department;
-import nudt.web.entity.Employee;
-import nudt.web.entity.Staff;
-import nudt.web.entity.StaffBen;
+import nudt.web.entity.*;
 import nudt.web.repository.StaffRepository;
+import nudt.web.service.ServiceService;
+import nudt.web.service.ServiceStaffService;
 import nudt.web.service.StaffService;
 import nudt.web.util.ContactAttributeMapperJSON;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +58,12 @@ public class ClerkController {
 
     @Autowired
     AppConfig appConfig;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    ServiceStaffService serviceStaffService;
 
     //我们用于测试自定义异常
     @ResponseBody
@@ -236,6 +241,7 @@ public class ClerkController {
         staff.setCountrycode(staffBen.getCountrycode());
         staff.setProvince(staffBen.getProvince());
         staff.setCity(staffBen.getCity());
+        staff.setCounty(staffBen.getCounty());
         staff.setEmail(staffBen.getEmail());
         staff.setOrganization(staffBen.getOrganization());
         staff.setDepartment(staffBen.getDepartment());
@@ -244,7 +250,16 @@ public class ClerkController {
         staff.setTelephone(staffBen.getTelephone());
         staff.setAddress(staffBen.getAddress());
         staff.setCode(0);
-        staffService.save(staff);
+
+        staff = staffService.save(staff);
+
+        //保存用户和业务系统之间的关系
+        ServiceStaff serviceStaff = new ServiceStaff();
+        Service service = serviceService.findServiceByServiceName(staffBen.getServiceName());
+        serviceStaff.setServiceId(service.getSid());
+        serviceStaff.setStaffId(staff.getId());
+        serviceStaffService.save(serviceStaff);
+
         return  "cert/login";
     }
 
@@ -271,6 +286,17 @@ public class ClerkController {
         lists.add("NUD");
         lists.add("MAS");
         maps.put("ou",lists);
+
+        //查询有多少个业务系统
+        List<Service> serviceList = serviceService.findAll();
+        List<String> services = new ArrayList<>();
+        for(Service service:serviceList)
+        {
+            services.add(service.getServiceName());
+        }
+
+        services.add("个体终端");
+        maps.put("services",services);
         return  "clerk/register";
     }
 

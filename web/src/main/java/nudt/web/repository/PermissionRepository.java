@@ -23,4 +23,6 @@ public interface PermissionRepository extends JpaRepository<Permission,Integer> 
         public Permission findPermissionByName(String name);
 
         public void deletePermissionById(Integer id);
+
+
 }

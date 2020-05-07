@@ -34,4 +34,7 @@ public interface StaffService {
 
     //批量删除
     public void deleteByIdIn(List<Integer> ids);
+
+    public List<Staff> findAllByIdIn(List<Integer> ids);
+
 }

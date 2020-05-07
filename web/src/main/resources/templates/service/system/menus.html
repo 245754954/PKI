@@ -91,29 +91,33 @@ $(document).ready(function(){
 	
 	// url和code排重(添加时)
 	$("#addBtn").click(function(){
-		var addcode = $("#addlistReponsitoryForm #addcode");
 		var addname = $("#addlistReponsitoryForm #addname");
 		var addurl = $("#addlistReponsitoryForm #addurl");
-		if(addcode.val().trim()=='' || addname.val().trim()==''){
+		var parentcode = $("#addlistReponsitoryForm #addpcode");
+
+		if(parentcode.val().trim()=='' || addname.val().trim()==''||addurl.val().trim()==''){
 			return;
 		}
 		operate({
-			codeVal : addcode.val(),
 			menuUrlVal : addurl.val(),
-			checkUrl:"/micromvc/uc/menuList/isExistCodeAndUrl",
+			name:addname.val(),
+			pidval:parentcode.val(),
+			checkUrl:"/per/isExistPermission",
 			targetForm : addlistReponsitoryForm,
-			targetFormUrl : "/micromvc/uc/menuList/createInfo"
+			targetFormUrl : "/per/createInfo"
 		});
 	});
 	
 	function operate(data){
+
+		var permissionname = data.name;
+
 		$.ajax({
 			url: data.checkUrl,
 			type:'post',
 			dataType:'json',
 			data:{
-				code : data.codeVal,
-				url : data.menuUrlVal
+			    "pname":permissionname
 			},
 			success:function(result,status){
 				if("000" == result.resultCode){
@@ -204,29 +208,37 @@ var setting = {
 	 };
 	        
 	function Adduser(){
-	       var pcode=$("#updatelistReponsitoryForm #code").val();
-	       var pname=$("#updatelistReponsitoryForm #name").val();
+	       var parentcode=$("#updatelistReponsitoryForm #code").val();
+	       var parentname=$("#updatelistReponsitoryForm #name").val();
 	       var levels=$("#updatelistReponsitoryForm #levels").val();
-	       var num=$("#updatelistReponsitoryForm #num").val();
-	       $("#addlistReponsitoryForm #addpcode").val(pcode);
-	       $("#addlistReponsitoryForm #pname").val(pname);
+	       var parentpid=$("#updatelistReponsitoryForm #pid").val();
+
+	       $("#addlistReponsitoryForm #addpcode").val(parentcode);
+	       $("#addlistReponsitoryForm #pname").val(parentname);
 	       $("#addlistReponsitoryForm #addlevels").val(Number(levels)+1);
-	       $("#addlistReponsitoryForm #addnum").val(num);
+	       $("#addlistReponsitoryForm #addnum").val(parentpid);
 	       $("#addlistReponsitoryForm [name=ismenu][value='1']").click();
 	} 
 
 	function setUser(seleObj){
+			// console.log(seleObj.id);
+			// console.log(seleObj.name);
+			// console.log(seleObj.pid);
+			// console.log(seleObj.murl);
+
+
 	    if (seleObj != null&&seleObj !="") {
 	    	$("#updatelistReponsitoryForm #id").val(seleObj.id);
 	    	var ll = $("#updatelistReponsitoryForm [name=ismenu]").length;
 	    	$("#updatelistReponsitoryForm [name=ismenu][value='"+seleObj.ismenu+"']").click();
-	    	$("#updatelistReponsitoryForm #code").val(seleObj.code);
+	    	$("#updatelistReponsitoryForm #code").val(seleObj.id);
 	    	$("#updatelistReponsitoryForm #name").val(seleObj.name.replace("(已停用)",""));
-	    	$("#updatelistReponsitoryForm #pcode").val(seleObj.pcode);
+	    	$("#updatelistReponsitoryForm #pcode").val(seleObj.pid);
 	    	$("#updatelistReponsitoryForm #levels").val(seleObj.levels);
-	    	$("#updatelistReponsitoryForm #num").val(seleObj.num);
+	    	$("#updatelistReponsitoryForm #pid").val(seleObj.pid);
 	    	$("#updatelistReponsitoryForm #url").val(seleObj.murl);
 	    	$("#alertMenuName").val(seleObj.name);
+
 	    	changeUI($("#updatelistReponsitoryForm"),seleObj.ismenu);
 	    }
 	}
@@ -261,7 +273,7 @@ var setting = {
                     <div class="col-sm-4">
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
-                                <a data-toggle="modal" class="btn btn-success" href="form_basic.html#modal-form" onclick="return Adduser();"><i class="fa fa-plus"></i>添加</a>
+                                <a data-toggle="modal" class="btn btn-success" href="#modal-form" onclick="return Adduser();"><i class="fa fa-plus"></i>添加</a>
                                 <a data-toggle="modal" class="btn btn-warning" id="disable"><i class="fa fa-times"></i>停用</a>
                                 <a data-toggle="modal" class="btn btn-primary" id="enabled"><i class="fa fa-check"></i>启用</a>
                             </div>
@@ -290,7 +302,7 @@ var setting = {
                                         </div>
 			                        </div>
 			                        <div class="form-group">
-			                            <label class="col-sm-2 control-label">菜单编码：</label>
+			                            <label class="col-sm-2 control-label">菜单编号：</label>
 			                            <div class="col-sm-9">
 			                                <input id="code" name="code" minlength="2" type="text" class="form-control" required="" aria-required="true" readonly="readonly">
 			                            </div>
@@ -308,9 +320,9 @@ var setting = {
 			                            </div>
 			                        </div>
 			                        <div class="form-group">
-			                            <label class="col-sm-2 control-label">菜单序号：</label>
+			                            <label class="col-sm-2 control-label">父菜单编号：</label>
 			                            <div class="col-sm-9">
-			                                <input id="num" type="number" class="form-control" name="num" required="" aria-required="true">
+			                                <input id="pid" type="number" class="form-control" name="pid" required="" aria-required="true">
 			                            </div>
 			                        </div>
 			                        <div class="form-group">
@@ -355,12 +367,12 @@ var setting = {
 			                                <input id="pname" name="pname" type="text" class="form-control" disabled="disabled">
 			                            </div>
 			                        </div>
-			                        <div class="form-group">
-			                            <label class="col-sm-3 control-label">菜单编码：</label>
-			                            <div class="col-sm-9">
-			                                <input id="addcode" name="code" minlength="2" type="text" class="form-control" required="" aria-required="true">
-			                            </div>
-			                        </div>
+			                        <!--<div class="form-group">-->
+			                            <!--<label class="col-sm-3 control-label">父菜单编码：</label>-->
+			                            <!--<div class="col-sm-9">-->
+			                                <!--<input id="addcode" name="code" minlength="2" type="text" class="form-control" required="" aria-required="true">-->
+			                            <!--</div>-->
+			                        <!--</div>-->
 			                        <div class="form-group">
 			                            <label class="col-sm-3 control-label">菜单名称：</label>
 			                            <div class="col-sm-9">
@@ -373,12 +385,12 @@ var setting = {
 			                                <input id="addurl" name="url" class="form-control">
 			                            </div>
 			                        </div>
-			                        <div class="form-group">
-			                            <label class="col-sm-3 control-label">菜单序号：</label>
-			                            <div class="col-sm-9">
-			                                <input id="addnum" type="number" class="form-control" name="num" required="" aria-required="true">
-			                            </div>
-			                        </div>
+			                        <!--<div class="form-group">-->
+			                            <!--<label class="col-sm-3 control-label">菜单序号：</label>-->
+			                            <!--<div class="col-sm-9">-->
+			                                <!--<input id="addnum" type="number" class="form-control" name="num" required="" aria-required="true">-->
+			                            <!--</div>-->
+			                        <!--</div>-->
 			                        <div class="form-group">
 			                            <div class="col-sm-10 col-sm-offset-3">
 			                                <button class="btn btn-success" id="addBtn"><i class="fa fa-plus"></i>添加</button>

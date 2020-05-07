@@ -63,4 +63,10 @@ public class PermissionServiceImpl implements PermissionService {
 
         return permissions;
     }
+
+    @Override
+    @Transactional
+    public Permission save(Permission permission) {
+        return  permissionRepository.save(permission);
+    }
 }

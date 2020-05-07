@@ -2,7 +2,7 @@
 <html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>bootstrap个人简历练习</title>
+    <title>个人中心</title>
     <meta  name="viewport" content="width=device-width,initial-scale=1">
     <link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}" rel="stylesheet">
     <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
@@ -86,9 +86,9 @@
         <ul class="list-group">
             <li class="list-group-item list-group-item-success">
                 <div class="row">
-                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.username}">2015/3/1-至今</div>
-                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.organization}">XXX公司</div>
-                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.department}">IOS开发工程师</div>
+                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.username}"></div>
+                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.organization}"></div>
+                    <div class="col-sm-4" th:if="${staff} ne null" th:text="${staff.department}"></div>
                 </div>
             </li>
         </ul>

@@ -16,4 +16,6 @@ public interface RolePermissionService {
     //根据角色id集合，找到用户的权限ids
     public List<Integer> findPidsByRids(List<Integer> rids);
 
+    public void deleteAllByRid(Integer roleid);
+
 }

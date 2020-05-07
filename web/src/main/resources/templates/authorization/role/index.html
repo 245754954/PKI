@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+      <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+      <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
 	<link rel="stylesheet" href="../../../authorization/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="../../../authorization/css/font-awesome.min.css">
 	<link rel="stylesheet" href="../../../authorization/css/main.css">
@@ -20,6 +21,93 @@
 	table tbody tr:nth-child(odd){background:#F4F4F4;}
 	table tbody td:nth-child(even){color:#C00;}
 	</style>
+
+      <script type="text/JavaScript">
+          $(document).ready(function () {
+
+              $("#pid").change(function() {
+                  var serviceName = $("#pid").val();
+                  // 分页查询
+                  var pageno = 0;
+
+                  getRolesByServiceName(pageno);
+
+
+
+              // 分页查询
+              function getRolesByServiceName( pageno ) {
+                  var loadingIndex = null;
+
+                  var jsonData = {"pageno" : pageno, "pagesize" : 2};
+
+                      jsonData.queryText =serviceName;
+
+
+                  $.ajax({
+                      type : "POST",
+                      url  : "/role/getRolesByServiceName",
+                      data : jsonData,
+                      beforeSend : function(){
+                          loadingIndex = layer.msg('处理中', {icon: 16});
+                      },
+                      success : function(result) {
+                          layer.close(loadingIndex);
+                          if ( result.success ) {
+                              // 局部刷新页面数据
+                              var tableContent = "";
+                              var pageContent = "";
+
+                              var rolePage = result.data;
+                              var roles = rolePage.datas;
+
+                              $.each(roles, function(i, role){
+                                  tableContent += '<tr>';
+                                  tableContent += '  <td>'+(i+1)+'</td>';
+                                  tableContent += '  <td><input type="checkbox" name="roleid" value="'+role.roleid+'"></td>';
+                                  tableContent += '  <td>'+role.rolename+'</td>';
+                                  tableContent += '  <td>'+role.serviceName+'</td>';
+                                  tableContent += '  <td>';
+                                  tableContent += '      <button type="button" onclick="goAssignPage('+role.roleid+')" class="btn btn-success btn-xs"><i class=" glyphicon glyphicon-check"></i></button>';
+                                  tableContent += '      <button type="button" onclick="goUpdatePage('+role.roleid+')" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>';
+                                  tableContent += '	  <button type="button" onclick="deleteUser('+role.roleid+',\''+role.rolename+'\')" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>';
+                                  tableContent += '  </td>';
+                                  tableContent += '</tr>';
+                              });
+
+                              if ( pageno >= 1 ) {
+                                  pageContent += '<li><a href="#" onclick="pageQuery('+(pageno-1)+')">上一页</a></li>';
+                              }
+
+                              for ( var i = 0; i < rolePage.totalno; i++ ) {
+                                  if ( i == pageno ) {
+                                      pageContent += '<li class="active"><a  href="#">'+i+'</a></li>';
+                                  } else {
+                                      pageContent += '<li ><a href="#" onclick="pageQuery('+i+')">'+i+'</a></li>';
+                                  }
+                              }
+
+                              if ( pageno < rolePage.totalno ) {
+                                  pageContent += '<li><a href="#" onclick="pageQuery('+(pageno+1)+')">下一页</a></li>';
+                              }
+
+                              $("#roleData").html(tableContent);
+                              $(".pagination").html(pageContent);
+                          } else {
+                              layer.msg("角色信息分页查询失败", {time:2000, icon:5, shift:6}, function(){
+
+                              });
+                          }
+                      }
+                  });
+              }
+
+              });
+
+          });
+
+      </script>
+
+
   </head>
 
   <body>
@@ -44,6 +132,15 @@
   </div>
   <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
 </form>
+
+<div style="float:right;" >
+       <select id="pid" name="serviceName"  class="btn btn-info form-control">
+              <option th:each="service:${services}" th:text="${service}" th:value="${service}">
+              </option>
+       </select>
+       <span style="width: 40px" class="input-group-btn">隶属系统</span>
+</div>
+
 <button type="button" class="btn btn-danger" onclick="deleteUsers()" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
 <button id="toAddRolePage" type="button" class="btn btn-primary" style="float:right;" ><i class="glyphicon glyphicon-plus"></i> 新增</button>
 <br>
@@ -62,7 +159,7 @@
               </thead>
               
               <tbody id="roleData">
-			  <tr th:each="role:${roles}">
+			  <tr th:if="${roles} ne null" th:each="role:${roles}">
 				  <td th:text="${role.roleid}"></td>
 				  <td><input type="checkbox"></td>
 				  <td th:text="${role.rolename}"></td>
@@ -99,9 +196,6 @@
       </div>
     </div>
 
-    <script src="../../../authorization/jquery/jquery-2.1.1.min.js"></script>
-    <script src="../../../authorization/bootstrap/js/bootstrap.min.js"></script>
-	<script src="../../../authorization/script/docs.min.js"></script>
 	<script src="../../../authorization/layer/layer.js"></script>
         <script type="text/javascript">
             var likeflg = false;

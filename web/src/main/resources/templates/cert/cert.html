@@ -5,25 +5,15 @@
 <title>rsax509证书生成</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="../../cert/layui/css/layui.css" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src="../../cert/js/jquery-1.11.3.min.js"></script>
 <link href="../../cert/css/cert.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="../../clerk/dist/distpicker.js"></script>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+    <script type="text/javascript" src="../../clerk/dist/distpicker.js"></script>
 
-<script type="text/javascript">
-
-    $(document).ready(function () {
+    <script type="text/javascript">
 
 
-
-        $("#province").attr("data-province","四川省")
-        $("#city").attr("data-city","成都市")
-        $("#county").attr("data-county","双流区")
-        $("#disSelect").distpicker();
-        
-    })
-
-</script>
-
+    </script>
 </head>
 <body>
 <iframe src="/api/toHeaderPage" height="50px" width="1200px" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" ></iframe>
@@ -49,31 +39,34 @@
           </div>
 
 
-          <div id="disSelect"   >
-                <div class="layui-inline">
-                        <label class="layui-form-label">省份/州</label>
-                        <div class="layui-input-inline">
-                            <select  style="width: 190px" name="ST" class="layui-input" id="province" data-province="四川省"></select>
-                        </div>
-                </div>
 
-                <div class="layui-inline">
-                        <label class="layui-form-label">城市</label>
-                        <div class="layui-input-inline">
-                            <select style="width: 210px" name="L" class="layui-input" id="city" data-city="成都市"></select>
-                        </div>
-                </div>
 
-              <div class="layui-inline">
-                  <label class="layui-form-label">地区</label>
-                  <div class="layui-input-inline">
-                      <select style="width: 210px" name="county" class="layui-input" id="county" data-county="龙泉驿区"></select>
-                  </div>
-              </div>
+     <div  class="layui-form-item">
+         <div class="layui-inline">
+             <label class="layui-form-label">省份/州</label>
+             <div class="layui-input-inline">
+                 <input readonly="readonly" th:if="${staff} ne null" th:value="${staff.province}"  type="text" name="ST"  id="province" placeholder="请输入省份" autocomplete="off" class="layui-input">
+             </div>
+         </div>
 
-          </div>
+         <div class="layui-inline">
+             <label class="layui-form-label">城市</label>
+             <div class="layui-input-inline">
+                 <input readonly="readonly" type="text" name="L" th:if="${staff} ne null" th:value="${staff.city}"  id="city"  placeholder="请输入市" autocomplete="off" class="layui-input">
+             </div>
+         </div>
 
-          <div class="layui-form-item">
+         <div class="layui-inline">
+             <label class="layui-form-label">地区</label>
+             <div class="layui-input-inline">
+                 <input readonly="readonly" type="text" name="county"  id="county" th:if="${staff} ne null" th:value="${staff.county}" placeholder="请输入区" autocomplete="off" class="layui-input">
+             </div>
+         </div>
+
+     </div>
+
+
+     <div class="layui-form-item">
             <div class="layui-inline">
               <label class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
@@ -83,13 +76,13 @@
             <div class="layui-inline">
               <label class="layui-form-label">组织</label>
               <div class="layui-input-inline">
-                <input  readonly="readonly" th:if="${staff} ne null" th:value="${staff.organization}" type="text" name="O" lay-verify="required" placeholder="请输入组织代码" autocomplete="off" class="layui-input">
+                <input  readonly="readonly" th:if="${staff} ne null" th:value="${staff.organization}" type="text" name="O" lay-verify="required" placeholder="请输入组织" autocomplete="off" class="layui-input">
               </div>
             </div>
-                <div class="layui-inline">
+            <div class="layui-inline">
               <label class="layui-form-label">单位</label>
               <div class="layui-input-inline">
-                <input readonly="readonly"  th:if="${staff} ne null" th:value="${staff.department}" type="text" name="OU" placeholder="请输入单位代码"  lay-verify="required"  autocomplete="off" class="layui-input">
+                <input readonly="readonly"  th:if="${staff} ne null" th:value="${staff.department}" type="text" name="OU" placeholder="请输入单位"  lay-verify="required"  autocomplete="off" class="layui-input">
               </div>
             </div>
           </div>
@@ -163,16 +156,15 @@
                              </div>
                      </div>
 
-                 <div class="layui-form-item op-div">
-                     <button class="layui-btn" lay-submit lay-filter="cert-create" >证书生成</button>
-                     <button type="reset" class="layui-btn layui-btn-primary">清空</button>
-
-                 </div>
-              </div>
-          </div>
+                     <div class="layui-form-item op-div">
+                         <button class="layui-btn" lay-submit lay-filter="cert-create" >证书生成</button>
+                         <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+                     </div>
+             </div>
+     </div>
 
  </div>
-</div>
+
 
 	     <div id="keypair-show">
 			<div class="pri-container">
@@ -192,8 +184,8 @@
                 </pre>
 				</div>
          </div>
-	
-	
+
+
 <script type="text/javascript" src="../../cert/layui/layui.all.js"></script>
 	<script type="text/javascript">
         var rsa_html="  <div class=\"layui-form-item\">\n" +

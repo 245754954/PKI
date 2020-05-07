@@ -44,6 +44,14 @@
                             <input id="role" name="role" type="text" class="form-control"  >
                         </div>
 
+                        <div class="form-group" >
+                            <label>角色所隶属的业务系统</label>
+                            <select id="yewu" name="serviceName"  >
+                                <option th:if="${services} ne null" th:each="service:${services}"  th:value="${service.serviceName}" th:text="${service.serviceName}" >
+                                </option>
+                            </select>
+                        </div>
+
                         <button id="insertBtn" type="button" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> 新增</button>
                         <button type="button" class="btn btn-danger"><i class="glyphicon glyphicon-refresh"></i> 重置</button>
                     </form>
@@ -98,8 +106,17 @@
         $("#insertBtn").click(function(){
 
             var rolename = $("#role").val();
+            var options=$("#yewu option:selected");
+            var serviceName = options.val();
             if ( rolename == "" ) {
                 layer.msg("角色不能为空，请输入", {time:2000, icon:5, shift:6}, function(){
+
+                });
+                return;
+            }
+
+            if ( serviceName == "" ) {
+                layer.msg("必须选择隶属业务系统", {time:2000, icon:5, shift:6}, function(){
 
                 });
                 return;
@@ -112,7 +129,8 @@
                 url  : "/role/insert",
                 data : {
 
-                    "name":rolename
+                    "name":rolename,
+                    "serviceName":serviceName,
                 },
                 beforeSend : function() {
                     loadingIndex = layer.msg('处理中', {icon: 16});

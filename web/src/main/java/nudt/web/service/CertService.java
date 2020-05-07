@@ -46,4 +46,8 @@ public interface CertService {
 
 
 	public boolean verifyUserCert( X509Certificate userCert, PublicKey CAPublicKey) throws CertException;
+
+	//根据用户的名字删除用户的所有证书文件
+	public  boolean certRevoke(String username) throws CertException;
+
 }

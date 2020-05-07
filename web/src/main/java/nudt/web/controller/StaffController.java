@@ -2,13 +2,9 @@ package nudt.web.controller;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import nudt.web.entity.AJAXResult;
-import nudt.web.entity.Role;
-import nudt.web.entity.Staff;
-import nudt.web.entity.StaffRole;
-import nudt.web.service.RoleService;
-import nudt.web.service.StaffRoleService;
-import nudt.web.service.StaffService;
+
+import nudt.web.entity.*;
+import nudt.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +36,15 @@ public class StaffController {
 
     @Autowired
     StaffRoleService staffRoleService;
+
+    @Autowired
+    ServiceStaffService serviceStaffService;
+
+    @Autowired
+    CertService certService;
+
+    @Autowired
+    ServiceService serviceService;
 
     @RequestMapping(value = "/find",method = {RequestMethod.GET,RequestMethod.POST})
     public void findAll(){
@@ -75,6 +80,17 @@ public class StaffController {
         {
             totalpage = totalsize/pagesize+1;
         }
+
+        //查询所有的业务系统
+        List<Service> serviceList = serviceService.findAll();
+        List<String> services = new ArrayList<>();
+        for(Service service:serviceList)
+        {
+            services.add(service.getServiceName());
+        }
+        model.addAttribute("services",services);
+
+
         model.addAttribute("totalno",totalpage);
         //使用limit 需要两个参数，start和size
         return "authorization/user/user";
@@ -91,7 +107,7 @@ public class StaffController {
 
     @ResponseBody
     @RequestMapping("/pageQuery")
-    public Object pageQuery( String queryText, Integer pageno, Integer pagesize ) {
+    public Object pageQuery(Model model,String queryText, Integer pageno, Integer pagesize ) {
 
 
 
@@ -133,6 +149,8 @@ public class StaffController {
                 e.printStackTrace();
                 result.setSuccess(false);
             }
+
+
 
             return result;
 
@@ -215,14 +233,20 @@ public class StaffController {
     }
 
 
+    //删除个体就需要删除个体和service业务系统的对应关系
+    //删除用户的数字证书等一切信息
     @ResponseBody
     @RequestMapping("/delete")
     public Object delete( Integer id ) {
         AJAXResult result = new AJAXResult();
 
         try {
-
+            Staff staff = staffService.findStaffById(id);
             staffService.deleteStaffById(id);
+            serviceStaffService.deleteServiceStaffsByStaffId(id);
+
+            //用户删除了那么他的证书文件也都应该失效了
+            certService.certRevoke(staff.getUsername());
             result.setSuccess(true);
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -238,7 +262,16 @@ public class StaffController {
         AJAXResult result = new AJAXResult();
         List<Integer> ids = Arrays.asList(userid);
         try {
-            staffService.deleteByIdIn(ids);
+            for(int i=0;i<ids.size();i++)
+            {
+                Integer id = ids.get(i);
+                Staff staff = staffService.findStaffById(id);
+                staffService.deleteStaffById(id);
+                serviceStaffService.deleteServiceStaffsByStaffId(id);
+                //用户删除了那么他的证书文件也都应该失效了
+                certService.certRevoke(staff.getUsername());
+            }
+
             result.setSuccess(true);
         } catch ( Exception e ) {
             e.printStackTrace();

@@ -1,10 +1,14 @@
 package nudt.web.service.impl;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 import nudt.core.exception.CertException;
@@ -15,9 +19,12 @@ import nudt.web.config.CaConfig;
 import nudt.web.dto.CertReq;
 import nudt.web.dto.CertResult;
 import nudt.web.dto.KeyPairResult;
+import nudt.web.entity.CRL;
 import nudt.web.entity.Cert;
 import nudt.web.repository.CertRepository;
 import nudt.web.service.CertService;
+import nudt.web.service.CrlService;
+import nudt.web.util.FileUtil;
 import nudt.web.util.KeyPairUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +41,13 @@ public class CertServiceImpl implements CertService {
 
 	@Autowired
 	CertRepository certRepository;
+
+	@Autowired
+	CertService certService;
+
+	@Autowired
+	CrlService crlService;
+
 	@Override
 	public CertResult certToUser(CertReq req, Integer keySize) throws Exception
 	{
@@ -124,6 +138,50 @@ public class CertServiceImpl implements CertService {
 		Boolean b =CertUtil.verifyUserCert(userCert,CAPublicKey);
 
 		return b;
+	}
+
+	@Override
+	//删除保存数字证书目录下的数字证书及其文件夹
+	public boolean certRevoke(String username) throws CertException {
+
+		try {
+		Cert cert = certService.findCertByUsername(username);
+		String serialNumber = cert.getSerialNumber();
+		//删除已经存在的证书信息，并保存到CRL
+		CaConfig caConfig = appConfig.getByKeyType(cert.getCaType());
+		String certDir = caConfig.getClientCertBasePath() + "/" + cert.getSerialNumber();
+		String cert_path = certDir + "/"+username+"_cert.cer";
+		String pri_pem_path = certDir + "/"+username+"_pri.pem";
+		String pub_pem_path = certDir + "/"+username+"_pub.pem";
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		File file = new File(cert_path);
+		// 毫秒数
+		long modifiedTime = file.lastModified();
+		// 通过毫秒数构造日期 即可将毫秒数转换为日期
+		Date d = new Date(modifiedTime);
+		PublicKey publicKey = CertUtil.readPublicKeyPem(pub_pem_path);
+		PrivateKey privateKey = CertUtil.readPrivateKeyPem(pri_pem_path);
+		X509Certificate certificate = CertUtil.readX509Cert(cert_path);
+		CRL crl = new CRL();
+		crl.setCreateTime(d);
+		crl.setIsValidate(false);
+		crl.setPriKey(privateKey.toString());
+		crl.setPubKey(publicKey.toString());
+		crl.setSerialNumber(certificate.getSerialNumber().toString());
+		crlService.Add(crl);
+		//删除保存数字证书目录下的数字证书及其文件夹
+		FileUtil.delFile(certDir);
+
+		//将已经删除的证书加入到作为CRL列表，提供给他人查询
+		//删除数据库的记录
+		certService.deleteBySerialNumber(serialNumber);
+		return true;
+
+		}catch (Exception e)
+		{
+			return false;
+		}
+
 	}
 
 

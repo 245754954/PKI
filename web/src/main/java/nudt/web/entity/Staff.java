@@ -29,6 +29,9 @@ public class Staff {
     @Column
     private String city;
 
+    @Column
+    private String county;
+
     //邮箱
     @Column
     private String email;

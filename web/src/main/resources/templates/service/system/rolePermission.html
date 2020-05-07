@@ -1,4 +1,4 @@
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <html>
 <head>
     <meta charset="utf-8">
@@ -23,7 +23,8 @@
 <script type="text/javascript">  
 
 $(document).ready(function(){
-	var role_id = '{param.role_id';
+	var role_id = $("#role_id").val();
+
 	var zTree;
 	//第一次加载树
 	initTree();
@@ -55,6 +56,7 @@ $(document).ready(function(){
 	};
 
 	function initTree() {
+
 		var url = "/ser/getPermissionWithRole";
 		$.ajax({
 			url:url,
@@ -63,6 +65,7 @@ $(document).ready(function(){
 			data:{"role_id":role_id},
 			success:function(data,status){
 					treeData=data.menus;
+					console.log(treeData);
 					$.fn.zTree.init($("#tree"),setting, changeUrlName(treeData));
 					zTree = $.fn.zTree.getZTreeObj("tree");
 					zTree.expandAll(true);
@@ -131,6 +134,7 @@ $(document).ready(function(){
  </SCRIPT> 
 </head>
 <body class="gray-bg">
+
     <div class="wrapper wrapper-content animated fadeIn">
         <div class="row">
             <div class="col-sm-12">
@@ -223,5 +227,7 @@ $(document).ready(function(){
 	</div>
     <!-- layerDate plugin javascript -->
     <script src="../../service/js/bootstrap/js/plugins/layer/laydate/laydate.js"></script>
+
+	<input type="hidden" id="role_id" th:value="${role_id}" >
 </body>
 </html>
