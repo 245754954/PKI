@@ -1,7 +1,14 @@
 package nudt.web;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.connector.Connector;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
 //这个ImportResoucer注解是用于结合传统的spring注解，例如：springboot中有时候没有我们自己编写的
@@ -25,6 +32,8 @@ public class AppServerApplication {
 
 		SpringApplication.run(AppServerApplication.class, args);
 	}
+
+
 
 
 

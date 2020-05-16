@@ -57,7 +57,8 @@ public class CertController {
     @RequestMapping(value = "/auth",method = {RequestMethod.POST,RequestMethod.GET})
     public Map getClientCert(HttpServletRequest request) throws CertificateNotYetValidException, CertException {
         //获取客户端的数字证书
-               X509Certificate[] certificate = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+        X509Certificate[] certificate = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+
         System.out.println(certificate[0]);
 
         boolean b = certService.verifyCertificateValidity(certificate[0]);

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="../../authorization/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../authorization/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../authorization/css/main.css">
+    <style>
+        .tree li {
+            list-style-type: none;
+            cursor:pointer;
+        }
+        .tree-closed {
+            height : 40px;
+        }
+        .tree-expanded {
+            height : auto;
+        }
+    </style>
+</head>
+<body>
+<div class="tree">
+ <ul th:fragment="menubar" style="padding-left:0px;" class="list-group">
+    <th:block th:if="${rootPermission} ne null" th:each="permission:${rootPermission.children}">
+
+            <li th:if="${permission.children} eq null" class="list-group-item tree-closed" >
+                <a th:href="${permission.url}" ><i class="glyphicon glyphicon-dashboard"></i>[[${permission.name}]]</a>
+            </li>
+
+
+            <li th:if="${permission.children} ne null" class="list-group-item">
+                <span><i class="glyphicon glyphicon glyphicon-tasks"></i>[[${permission.name}]]<span class="badge" style="float:right">[[${permission.children.size()}]]</span></span>
+                <ul style="margin-top:10px;">
+                    <th:block th:each="child:${permission.children}" >
+                        <li style="height:30px;">
+                            <a th:href="${child.url}"><i class="glyphicon glyphicon-grain"></i> [[${child.name}]]</a>
+                        </li>
+                    </th:block>
+                </ul>
+            </li>
+
+    </th:block>
+</ul>
+</div>
+
+
+<script src="../../authorization/jquery/jquery-2.1.1.min.js"></script>
+<script src="../../authorization/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../authorization/script/docs.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".list-group-item").click(function(){
+            // jquery对象的回调方法中的this关键字为DOM对象
+            // $(DOM) ==> JQuery
+            if ( $(this).find("ul") ) { // 3 li
+                $(this).toggleClass("tree-closed");
+                if ( $(this).hasClass("tree-closed") ) {
+                    $("ul", this).hide("fast");
+                } else {
+                    $("ul", this).show("fast");
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

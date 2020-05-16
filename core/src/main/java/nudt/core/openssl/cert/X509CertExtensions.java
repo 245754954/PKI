@@ -99,25 +99,29 @@ public class X509CertExtensions {
 		// 添加证书策略
 		// certBuilder.addExtension(Extension.certificatePolicies, true,
 		// X509CertExtensions.buildPolicyInfo());
+		//添加subject alternative name
+		//certBuilder.addExtension(Extension.subjectAlternativeName,true,X509CertExtensions.buildSubjectAlternativeName(new GeneralName(GeneralName.iPAddress, "127.0.0.1")));
+
 		// 颁发者密钥标识
-		certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
-				utils.createAuthorityKeyIdentifier(caPublicKey));
+//		certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
+//				utils.createAuthorityKeyIdentifier(caPublicKey));
 		// 使用者密钥标识
 		certBuilder.addExtension(Extension.subjectKeyIdentifier, false,
 				utils.createSubjectKeyIdentifier(userPublicKey));
 		// 密钥用法
-		certBuilder.addExtension(Extension.keyUsage, true, X509CertExtensions.builldKeyUsage());
-		// 增强密钥用法
-		certBuilder.addExtension(Extension.extendedKeyUsage, true, X509CertExtensions.builldExtendKeyUsage());
+//		certBuilder.addExtension(Extension.keyUsage, true, X509CertExtensions.builldKeyUsage());
+//		// 增强密钥用法
+//		certBuilder.addExtension(Extension.extendedKeyUsage, true, X509CertExtensions.builldExtendKeyUsage());
+
 		// 主题备用名称扩展
-		/*certBuilder.addExtension(Extension.issuerAlternativeName, true, X509CertExtensions
-				.buildSubjectAlternativeName(new GeneralName(GeneralName.rfc822Name, "lianglei_lzx@163.com")));*/
+//		certBuilder.addExtension(Extension.issuerAlternativeName, true, X509CertExtensions
+//				.buildSubjectAlternativeName(new GeneralName(GeneralName.rfc822Name, "245754954@163.com")));
 		// 基本约束
-		if (userPublicKey == caPublicKey) {
-			certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(3));
-		} else {
-			certBuilder.addExtension(Extension.basicConstraints, false, new BasicConstraints(0));
-		}
+//		if (userPublicKey == caPublicKey) {
+//			certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(3));
+//		} else {
+//			certBuilder.addExtension(Extension.basicConstraints, false, new BasicConstraints(0));
+//		}
 
 	}
 }

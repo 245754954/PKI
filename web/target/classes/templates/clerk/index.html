@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Signin Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"  rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link th:href="@{../../clerk/asserts/css/signin.css}" rel="stylesheet">
+		<script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+	<script type="text/javascript">
+        $(document).ready(function(){
+			//去注册页面
+            $("#register").click(function(){
+                        window.location.href="/clerk/toRegisterPage";
+            });
+
+        })
+
+
+	</script>
+	</head>
+
+	<body class="text-center">
+		<form class="form-signin" th:action="@{/clerk/dashboard}">
+			<img class="mb-4" th:src="@{../../clerk/asserts/img/bootstrap-solid.svg}"  alt="" width="72" height="72">
+			<h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+			<!--我们需要使用th:if标签判断msg是否为空，为空就不生成-->
+
+			<p style="color:red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+			<label class="sr-only">Username</label>
+			<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
+			<label class="sr-only">Password</label>
+			<input type="password" name="password" class="form-control" placeholder="Password" required="">
+			<div class="checkbox mb-3">
+				<label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+			</div>
+			<button class="btn btn-sm btn-primary btn-block" type="submit">登录</button>
+			<div class="btn btn-sm btn-primary btn-block" id="register">注册</div>
+			<p class="mt-5 mb-3 text-muted">© 2017-2018</p>
+			<a th:href="@{/clerk/index}" class="btn btn-sm">管理员登录</a>
+			<a th:href="@{/api/toLoginPage}" class="btn btn-sm">普通用户登录</a>
+		</form>
+
+	</body>
+
+</html>

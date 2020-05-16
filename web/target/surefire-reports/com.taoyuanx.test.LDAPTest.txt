@@ -1,0 +1,22 @@
+-------------------------------------------------------------------------------
+Test set: com.taoyuanx.test.LDAPTest
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.917 s <<< FAILURE! - in com.taoyuanx.test.LDAPTest
+Add(com.taoyuanx.test.LDAPTest)  Time elapsed: 0.03 s  <<< ERROR!
+org.springframework.ldap.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]; nested exception is javax.naming.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]; remaining name 'cn=Aiden Ning,ou=xianyu'
+	at com.taoyuanx.test.LDAPTest.Add(LDAPTest.java:234)
+Caused by: javax.naming.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]
+	at com.taoyuanx.test.LDAPTest.Add(LDAPTest.java:234)
+
+Add2(com.taoyuanx.test.LDAPTest)  Time elapsed: 0.031 s  <<< ERROR!
+org.springframework.ldap.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]; nested exception is javax.naming.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]; remaining name 'ou=Ant Forest,ou=taobao'
+	at com.taoyuanx.test.LDAPTest.Add2(LDAPTest.java:273)
+Caused by: javax.naming.NameAlreadyBoundException: [LDAP: error code 68 - Entry Already Exists]
+	at com.taoyuanx.test.LDAPTest.Add2(LDAPTest.java:273)
+
+findByPrimaryKey(com.taoyuanx.test.LDAPTest)  Time elapsed: 0.037 s  <<< ERROR!
+org.springframework.ldap.NameNotFoundException: [LDAP: error code 32 - No Such Object]; nested exception is javax.naming.NameNotFoundException: [LDAP: error code 32 - No Such Object]; remaining name 'ou=Ant Forest,ou=taobao'
+	at com.taoyuanx.test.LDAPTest.findByPrimaryKey(LDAPTest.java:324)
+Caused by: javax.naming.NameNotFoundException: [LDAP: error code 32 - No Such Object]
+	at com.taoyuanx.test.LDAPTest.findByPrimaryKey(LDAPTest.java:324)
+

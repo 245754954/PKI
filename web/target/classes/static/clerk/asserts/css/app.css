@@ -1,0 +1,16 @@
+.mui-plus.mui-android header.mui-bar{
+	display: none;
+}
+.mui-plus.mui-android .mui-bar-nav~.mui-content{
+	padding: 0;
+}
+.mui-col-xs-3{
+	background-color: #fff;
+}
+.mui-segmented-control{
+	background-color: #efeff4;
+}
+
+.mui-ios .mui-table-view-cell{
+	/*height: 60px;*/
+}

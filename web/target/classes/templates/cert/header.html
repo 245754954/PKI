@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+<title>header</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"  rel="stylesheet">
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css">
+    <script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#down-p12").click(function(){
+
+                window.open("/api/downCertZip");
+
+        });
+
+
+        
+    })
+
+</script>
+</head>
+
+<body>
+
+    <a style="margin-left:200px;margin-top: 100px;font-size: x-large" href="/api/toCreatePage" target="_blank">密钥对生成操作</a>
+    <a style="margin-left: 20px;;margin-top: 100px;font-size: x-large" href="/api/toCertPage" target="_blank" >证书生成操作</a>
+    <a  style="color: #007BFF; margin-left:20px;margin-top: 100px;font-size: x-large" id="down-p12" target="_blank" >下载P12/PFX</a>
+    <a  style="color: #007BFF; margin-left:20px;margin-top: 100px;font-size: x-large" href="/api/toCertfrozePage"  target="_blank" >证书冻结</a>
+    <a  style="color: #007BFF; margin-left:20px;margin-top: 100px;font-size: x-large" href="/api/toCertStatusPage" id="certLogout"  target="_blank" >证书注销</a>
+    <a  style="color: #007BFF; margin-left:20px;margin-top: 100px;font-size: x-large" href="/api/toPersonalCenter"   target="_blank" >个人中心</a>
+
+
+
+
+</body>
+</html>
