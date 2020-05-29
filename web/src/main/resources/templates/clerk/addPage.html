@@ -40,6 +40,21 @@
             animation: chartjs-render-animation 0.001s;
         }
     </style>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+    <script type="text/javascript" src="../../clerk/dist/distpicker.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $("#province").attr("data-province","四川省")
+            $("#city").attr("data-city","成都市")
+            $("#county").attr("data-county","双流区")
+            $("#disSelect").distpicker();
+
+        })
+
+
+    </script>
 </head>
 
 <body>
@@ -61,71 +76,122 @@
                 -->
                 <input type="hidden" name="_method" value="put" th:if="${staff!=null}"/>
                 <input type="hidden" name="id" th:if="${staff!=null}" th:value="${staff.id}">
+
+
+
                 <div class="form-group">
                     <label>国家</label>
-                    <input name="countrycode" type="text" class="form-control" placeholder="CN or US" >
-                </div>
-                <div class="form-group">
-                <label>省</label>
-                <input name="province" type="text" class="form-control" placeholder="省份" >
-              </div>
-
-                <div class="form-group">
-                    <label>市</label>
-                    <input name="city" type="text" class="form-control" placeholder="市" >
+                    <select id="countrycode" name="countrycode"  class="btn btn-info form-control">
+                        <option >
+                            CN
+                        </option>
+                        <option >
+                            US
+                        </option>
+                    </select>
                 </div>
 
-                <div class="form-group">
-                    <label>县</label>
-                    <input name="county" type="text" class="form-control" placeholder="county" >
+                <div id="disSelect">
+                    <div class="form-group">
+                        <label>省</label>
+                        <select  name="province" class="btn btn-info form-control" id="province" data-province="四川省"></select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>市</label>
+                        <select  name="city" class="btn btn-info form-control" id="city" data-city="成都市"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>县</label>
+                        <select name="county" class="btn btn-info form-control" id="county" data-county="龙泉驿区"></select>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>邮箱</label>
-                    <input name="email" type="email" class="form-control" placeholder="xxx@.com" >
+                    <input id="email" name="email" type="email" class="form-control" placeholder="xxx@.com" >
+                    <p class="help-block label label-warning">请输入合法的邮箱地址, 格式为： xxxx@xxxx.com</p>
+                </div>
+
+
+
+                <div class="form-group">
+                    <span style="width: 70px" class="input-group-btn">隶属系统</span>
+                    <select id="serviceName" name="serviceName"  class="btn btn-info form-control">
+                        <option th:each="service:${services}" th:text="${service}">
+                        </option>
+                    </select>
+
                 </div>
 
                 <div class="form-group">
-                    <label>组织</label>
-                    <input name="organization" type="text" class="form-control" placeholder="NUDT" >
+                    <span style="width: 70px" class="input-group-btn">组织</span>
+                    <select id="organization" name="organization"  class="btn btn-info form-control">
+                        <option th:each="ou1:${ou}" th:text="${ou1}">
+                        </option>
+                    </select>
+
                 </div>
 
 
 
                 <div class="form-group">
                     <label>单位</label>
-                    <input name="department" type="text" class="form-control" placeholder="计算科学系" >
+                    <select id="department" name="department"  class="btn btn-info form-control">
+                        <option >
+                            计算科学系
+                        </option>
+                        <option >
+                            网络安全系
+                        </option>
+                        <option >
+                            电子科学系
+                        </option>
+                        <option >
+                            微电子系
+                        </option>
+                        <option >
+                            软件工程系
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label>用户名</label>
-                    <input name="username" type="text" class="form-control" placeholder="用户名" >
+                    <input id="username" name="username" type="text" class="form-control" placeholder="用户名" >
                 </div>
 
                 <div class="form-group">
                     <label>密码</label>
-                    <input name="password" type="password" class="form-control" placeholder="123456" >
+                    <input id="password" name="password" type="password" class="form-control" placeholder="123456" >
                 </div>
 
 
                 <div class="form-group">
                     <label>电话</label>
-                    <input name="telephone" type="number" class="form-control" placeholder="18392435567" >
+                    <input id="telephone" name="telephone" type="number" class="form-control" placeholder="18392435567" >
                 </div>
 
                 <div class="form-group">
-                    <label>地址</label>
-                    <input name="address" type="text" class="form-control" placeholder="地址" >
+                    <label>详细住址准确到村</label>
+                    <input id="address" name="address" type="text" class="form-control" placeholder="地址" >
                 </div>
 
                 <div class="form-group">
                     <label>描述</label>
-                    <input name="description" type="text" class="form-control" placeholder="描述" >
+                    <input id="description" name="description" type="text" class="form-control" placeholder="个体描述" >
                 </div>
 
                 <div class="form-group">
-                    <label>是否审核通过</label>
-                    <input name="code" type="number" class="form-control" placeholder="是否通过审核">
+                    <label>是否通过审核，0代表未通过，1代表通过</label>
+                    <select id="code" name="code"  class="btn btn-info form-control">
+                        <option >
+                            0
+                        </option>
+                        <option >
+                            1
+                        </option>
+                    </select>
                 </div>
 
 
@@ -138,9 +204,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script type="text/javascript" src="../../clerk/asserts/js/jquery-3.2.1.slim.min.js"></script>
+
 <script type="text/javascript" src="../../clerk/asserts/js/popper.min.js"></script>
-<script type="text/javascript" src="../../clerk/asserts/js/bootstrap.min.js"></script>
 
 <!-- Icons -->
 <script type="text/javascript" src="../../clerk/asserts/js/feather.min.js"></script>

@@ -22,12 +22,7 @@
         <div class="container">
             <div class="navbar-header">
                 <div class="navbar-brand">个人信息</div>
-                <!-- 添加小屏下下拉列表按钮 -->
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#divNav">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
+
             </div>
             <div id="divNav" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -96,11 +91,7 @@
 
 </div>
 
-<footer>
-    <nav th:if="${cert} ne null" th:text="'All images and contents &copy;'+${cert.username}" class="navbar-fixed-bottom text-center navbar-default">
 
-    </nav>
-</footer>
 
 <script src="../../authorization/jquery/jquery-2.1.1.min.js"></script>
 <script src="../../authorization/bootstrap/js/bootstrap.min.js"></script>

@@ -1,5 +1,6 @@
 package com.taoyuanx.test;
 
+/*
 import nudt.web.AppServerApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,3 +27,4 @@ public class ComponentTest {
 
 
 }
+*/

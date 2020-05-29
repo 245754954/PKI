@@ -571,19 +571,19 @@ public class CertUtil {
 			{
 				Date TimeNow=new Date();
 				userCert.checkValidity(TimeNow);
-				System.out.println( " OK " );
-				return "OK";
+				System.out.println( "valid" );
+				return "valid";
 			} catch (CertificateExpiredException e)
 			{   // 过期
-				System.out.println( " Expired " );
+				System.out.println( "Invalid" );
 				System.out.println(e.getMessage());
-				return "Expired ";
+				return "Invalid";
 
 			} catch (CertificateNotYetValidException e)
 			{  // 尚未生效
-				System.out.println( " Too early " );
+				System.out.println( "Invalid" );
 				System.out.println(e.getMessage());
-				return "Too early";
+				return "Invalid";
 			}
 
 		}

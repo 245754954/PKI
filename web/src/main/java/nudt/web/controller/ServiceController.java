@@ -131,6 +131,26 @@ public class ServiceController
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/updateRole",method = {RequestMethod.POST,RequestMethod.GET})
+    public Map updateRole(@RequestParam("role_id")String role_id,@RequestParam("role_name")String role_name,@RequestParam("role_description")String role_description,HttpSession session,HttpServletRequest request, Service service){
+
+        //如果某个角色存在那么就不能再添加了
+        HashMap<String,Object> map = new HashMap();
+        Role ro = roleService.findRoleByName(role_name);
+
+        ro.setDescription(role_description);
+        ro.setName(role_name);
+        roleService.save(ro);
+
+        map.put("resultCode","000");
+        return map;
+    }
+
+
+
+
+
 
     //服务系统对自己本业务系统角色的处理
     @ResponseBody
@@ -193,21 +213,53 @@ public class ServiceController
     //给某个角色分配权限的页面，并且需要标记出已经分配给该角色的权限，同时列出未分配的权限
     @RequestMapping(value = "/toRolePermissionPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toRolePermissionPage(Model model,HttpSession session,HttpServletRequest request, Service service,@RequestParam("role_id")Integer role_id){
+
+
+
+
             model.addAttribute("role_id",role_id);
             return "/service/system/rolePermission";
     }
 
 
+    //得到所有的权限信息，并且分为已经分配和未分配的
+    //分配过的将checked设置为true，未分配的设置为false
     @ResponseBody
     @RequestMapping(value = "/getPermissionWithRole",method = {RequestMethod.POST,RequestMethod.GET})
     public Map<String, Object> getPermissionWithRole(
             HttpSession session,HttpServletRequest request, Service service,@RequestParam("role_id")Integer role_id){
         //找到本角色隶属于哪一个业务系统，找到业务系统的id
         List<Integer> serviceIds = serviceRoleService.findServiceIdsByRoleId(role_id);
+        //找到这些业务系统下的所有权限信息
         List<Integer> pids = servicePermissionService.findPermissionIdsByServiceIDs(serviceIds);
+
         //找到次业务系统下面的权限信息
         HashMap<String,Object> map = new HashMap<>();
+        //找到每一个业务系统的权限信息
         List<Permission> permissions = permissionService.findPermissionsByPid(pids);
+
+        //找到用户已经分配的权限信息
+        List<RolePermission> rolePermissions = rolePermissionService.findAllByRid(role_id);
+        //该角色已经拥有的权限信息
+        List<Integer> ownedPids = new ArrayList<>();
+        for(RolePermission rp:rolePermissions)
+        {
+            ownedPids.add(rp.getPid());
+        }
+
+        for(Permission p:permissions)
+        {
+            if(ownedPids.contains(p.getId()))
+            {
+                p.setChecked(true);
+            }
+            else
+            {
+                p.setChecked(false);
+            }
+        }
+
+
         map.put("menus",permissions);
         return map;
     }

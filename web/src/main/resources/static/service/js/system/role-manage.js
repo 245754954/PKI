@@ -32,6 +32,8 @@ $(function(){
 	}
 	
 	detail = function(id){	// 跳转查看详情页,也可自行弹窗显示
+
+
     	window.location.href= user.url.detailUrl + id;
     }
 	
@@ -40,7 +42,7 @@ $(function(){
 		searchUrl : '/ser/searchRole',	// 查询地址
 		deleteUrl : '/micromvc/uc/roleList/delInfo', 			// 删除地址
 		createUrl : '/ser/addRole', 		// 创建地址
-		updateUrl : '/micromvc/uc/roleList/updateInfo', 		// 更新地址
+		updateUrl : '/ser/updateRole', 		// 更新地址
 		detailUrl : '/ser/toRolePermissionPage?role_id='		// 编辑权限地址
 	}
 	var table_list = $("#table_list");	// 弹出窗口id
@@ -86,7 +88,6 @@ $(function(){
 		            for (var i = 0; i < ids.length; i++) {
 		                var curRowData = table_list.jqGrid('getRowData', ids[i]);
 		                var id = curRowData['id'];
-		                console.info(id);
 		            }
 		            layer.close(loading);//数据加载完成后，取消遮罩
 	            },
@@ -160,6 +161,7 @@ $(function(){
     $("#modify").click(function(){
         clearForm();
         var rowData = getRowData($(this), table_list);
+
         if (rowData != "") {
             $(this).attr("href","#modal-form");
             setDataToForm(rowData);
@@ -192,9 +194,9 @@ $(function(){
     //将后台获取到的数据，写到页面中
     function setDataToForm(data) {
         $('#id').val(data.id);
-        $('#role_id').val(data.role_id);
-        $('#role_name').val(data.role_name);
-        $('#role_type').val(data.role_type);
+        $('#role_id').val(data.id);
+        $('#role_name').val(data.name);
+        $('#role_description').val(data.description);
     }
     
     // 删除数据角色,和其子项
@@ -263,29 +265,33 @@ $(function(){
                 minlength: icon + "角色名称必须2个字符以上",
                 maxlength: icon + "角色名称必须50个字符以内"
             },
-            role_type: {
-            	required: icon + "请选择角色类型",
+            role_description: {
+            	required: icon + "请选择角色描述",
             }
         },
         submitHandler: function (form) {
         	var formUrl = user.url.createUrl;
         	var id=$("#id").val();
-        	if(id!=null && id!=0 && id.length>1){
+
+        	if(id!=null && id!=0 ){
         		formUrl = user.url.updateUrl;
         	}
+
             $.ajax({
                 type: "POST",
                 url: formUrl,
                 data: $(form).serialize(),
                 dataType: "json",
                 success: function (obj) {
+
                     if (obj.resultCode == "000") {
                         clearForm();
                         $("#modal-form-closer").click();
                         swal("保存成功！", "", "success");
                         table_list.trigger("resetSelection");	// 取消选中
                         table_list.trigger("reloadGrid");		// 重新加载数据
-                    }else{
+                    }
+                    else{
                     	swal("保存失败！", obj.msg, "error");
                     }
                 },

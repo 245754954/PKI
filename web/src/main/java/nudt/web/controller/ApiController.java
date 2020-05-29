@@ -23,6 +23,7 @@ import nudt.web.service.*;
 import nudt.web.util.FileUtil;
 import nudt.web.util.SimpleTokenManager;
 import nudt.web.util.Validator;
+import nudt.web.util.ZipUtils;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,6 +340,7 @@ public class ApiController {
         {
             c.setAlgorithm("DSA");
         }
+        c.setEncryptpassword(certReq.getEncryptpassword());
         c.setKeysize(keySize);
         c.setCaType(certReq.getCatype());
         c.setSigAlg(certReq.getSignAlg());
@@ -351,6 +353,7 @@ public class ApiController {
         c.setNotBefore(certToUser.getCert().getNotBefore());
         c.setNotAfter(certToUser.getCert().getNotAfter());
         c.setStatus("validity");
+
         //设置证书的状态
         certService.save(c);
 
@@ -383,7 +386,9 @@ public class ApiController {
             String readmeDoc = certDir + "/readme.txt";
             String readmeTxt = "证书类型为["+keyType.name+"]p12 alias:"+username+"\r\n p12 密码:"+passwd;
             FileUtils.writeStringToFile(new File(readmeDoc), readmeTxt, "UTF-8");
-            ZipUtil.zip(certDir, destPath);
+            //对文件夹压缩加密
+
+            ZipUtils.compressFolder(destPath,cert.getEncryptpassword(),certDir);
             // 下载
             File destZipFile = new File(destPath);
             resp.setContentType(req.getServletContext().getMimeType(destZipFile.getName()));
@@ -554,7 +559,7 @@ public class ApiController {
         c.setPassword(password);
         c.setNotBefore(certToUser.getCert().getNotBefore());
         c.setNotAfter(certToUser.getCert().getNotAfter());
-        c.setStatus("validity");
+        c.setStatus("valid");
         //设置证书的状态
         certService.save(c);
 

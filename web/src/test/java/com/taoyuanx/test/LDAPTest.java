@@ -35,6 +35,7 @@ import java.util.List;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+/*
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AppServerApplication.class)
 public class LDAPTest {
@@ -422,3 +423,4 @@ public class LDAPTest {
 
 
 }
+*/

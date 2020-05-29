@@ -12,12 +12,28 @@
 	<link rel="stylesheet" href="../../../authorization/css/font-awesome.min.css">
 	<link rel="stylesheet" href="../../../authorization/css/main.css">
 	<link rel="stylesheet" href="../../../authorization/css/doc.min.css">
-	<style>
+	  <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+	  <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+	  <script type="text/javascript" src="../../clerk/dist/distpicker.js"></script>
+	  <style>
 	.tree li {
         list-style-type: none;
 		cursor:pointer;
 	}
 	</style>
+
+	  <script type="text/javascript">
+          $(document).ready(function(){
+
+              $("#province").attr("data-province","四川省")
+              $("#city").attr("data-city","成都市")
+              $("#county").attr("data-county","双流区")
+              $("#disSelect").distpicker();
+
+          })
+
+
+	  </script>
   </head>
 
   <body>
@@ -41,21 +57,30 @@
 
 					<div class="form-group">
 						<label>国家</label>
-						<input id="countrycode" name="countrycode" type="text" class="form-control" placeholder="CN or US" >
-					</div>
-					<div class="form-group">
-						<label>省</label>
-						<input id="province" name="province" type="text" class="form-control" placeholder="省份" >
-					</div>
-
-					<div class="form-group">
-						<label>市</label>
-						<input id="city" name="city" type="text" class="form-control" placeholder="市" >
+						<select id="countrycode" name="countrycode"  class="btn btn-info form-control">
+							<option >
+								CN
+							</option>
+							<option >
+								US
+							</option>
+						</select>
 					</div>
 
-					<div class="form-group">
-						<label>县</label>
-						<input id="county" name="county" type="text" class="form-control" placeholder="county" >
+					<div id="disSelect">
+						<div class="form-group">
+							<label>省</label>
+							<select  name="province" class="btn btn-info form-control" id="province" data-province="四川省"></select>
+
+						</div>
+						<div class="form-group">
+							<label>市</label>
+							<select  name="city" class="btn btn-info form-control" id="city" data-city="成都市"></select>
+						</div>
+						<div class="form-group">
+							<label>县</label>
+							<select name="county" class="btn btn-info form-control" id="county" data-county="龙泉驿区"></select>
+						</div>
 					</div>
 
 					<div class="form-group">
@@ -64,16 +89,45 @@
 						<p class="help-block label label-warning">请输入合法的邮箱地址, 格式为： xxxx@xxxx.com</p>
 					</div>
 
+
+
 					<div class="form-group">
-						<label>组织</label>
-						<input id="organization" name="organization" type="text" class="form-control" placeholder="NUDT" >
+						<span style="width: 70px" class="input-group-btn">隶属系统</span>
+						<select id="serviceName" name="serviceName"  class="btn btn-info form-control">
+							<option th:each="service:${services}" th:text="${service}">
+							</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<span style="width: 70px" class="input-group-btn">组织</span>
+						<select id="organization" name="organization"  class="btn btn-info form-control">
+							<option th:each="ou1:${ou}" th:text="${ou1}">
+							</option>
+						</select>
 					</div>
 
 
 
 					<div class="form-group">
 						<label>单位</label>
-						<input id="department" name="department" type="text" class="form-control" placeholder="计算科学系" >
+						<select id="department" name="department"  class="btn btn-info form-control">
+							<option >
+								计算科学系
+							</option>
+							<option >
+								网络安全系
+							</option>
+							<option >
+								电子科学系
+							</option>
+							<option >
+								微电子系
+							</option>
+							<option >
+								软件工程系
+							</option>
+						</select>
 					</div>
 
 					<div class="form-group">
@@ -93,18 +147,25 @@
 					</div>
 
 					<div class="form-group">
-						<label>地址</label>
+						<label>详细住址准确到村</label>
 						<input id="address" name="address" type="text" class="form-control" placeholder="地址" >
 					</div>
 
 					<div class="form-group">
 						<label>描述</label>
-						<input id="description" name="description" type="text" class="form-control" placeholder="描述" >
+						<input id="description" name="description" type="text" class="form-control" placeholder="个体描述" >
 					</div>
 
 					<div class="form-group">
-						<label>是否审核通过</label>
-						<input id="code" name="code" type="number" class="form-control" placeholder="是否通过审核">
+						<label>是否通过审核，0代表未通过，1代表通过</label>
+						<select id="code" name="code"  class="btn btn-info form-control">
+							<option >
+								0
+							</option>
+							<option >
+								1
+							</option>
+						</select>
 					</div>
 
 				  <button id="insertBtn" type="button" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> 新增</button>
@@ -141,8 +202,7 @@
 		</div>
 	  </div>
 	</div>
-    <script src="../../../authorization/jquery/jquery-2.1.1.min.js"></script>
-    <script src="../../../authorization/bootstrap/js/bootstrap.min.js"></script>
+
 	<script src="../../../authorization/script/docs.min.js"></script>
 	<script src="../../../authorization/layer/layer.js"></script>
         <script type="text/javascript">
@@ -170,6 +230,7 @@
 			    	var telephone = $("#telephone").val();
 			    	var address = $("#address").val();
 			    	var description = $("#description").val();
+			    	var serviceName = $("#serviceName").val();
 			    	var code = $("#code").val();
 			    	if ( username == "" ) {
                         layer.msg("登录账号不能为空，请输入", {time:2000, icon:5, shift:6}, function(){
@@ -250,6 +311,13 @@
                         return;
                     }
 
+                    if ( serviceName == "" ) {
+                        layer.msg("请选择业务系统", {time:2000, icon:5, shift:6}, function(){
+
+                        });
+                        return;
+                    }
+
 			    	var loadingIndex = null;
 			    	$.ajax({
 			    		type : "POST",
@@ -260,13 +328,15 @@
                      		"city":city,
                      		"email":email,
                      		"organization":organization,
+                            "serviceName":serviceName,
                      		"department":department,
 							"username":username,
                      		"password":password,
                      		"telephone":telephone,
                      		"address":address,
                      		"description":description,
-                     		"code":code
+                     		"code":code,
+
 			    		},
 			    		beforeSend : function() {
 			    			loadingIndex = layer.msg('处理中', {icon: 16});

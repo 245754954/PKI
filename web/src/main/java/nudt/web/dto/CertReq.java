@@ -42,6 +42,9 @@ public class CertReq {
 
 	private Integer catype;
 
+	//加密证书文件夹的密码
+	private String encryptpassword;
+
 	public Integer getCatype() {
 		return catype;
 	}
@@ -102,6 +105,15 @@ public class CertReq {
 		}
 		return notBefore;
 	}
+
+	public String getEncryptpassword() {
+		return encryptpassword;
+	}
+
+	public void setEncryptpassword(String encryptpassword) {
+		this.encryptpassword = encryptpassword;
+	}
+
 	public void setNotBefore(Date notBefore) {
 		this.notBefore = notBefore;
 	}
@@ -128,7 +140,7 @@ public class CertReq {
 	//	"C=CN,ST=BJ,L=BJ,O=taoyuanx-client,OU=taoyuanx-client,CN=*.taoyuanx.com,E=xx@xx.com";
 		StringBuilder buf=new StringBuilder();
 		if(StringUtils.hasText(C)){
-			buf.append("C=").append(C).append(",");
+			buf.append("CN=").append(CN).append(",");
 		}
 		if(StringUtils.hasText(ST)){
 			buf.append("ST=").append(ST).append(",");

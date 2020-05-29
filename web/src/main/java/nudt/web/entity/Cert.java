@@ -89,6 +89,10 @@ public class Cert {
     @Column
     private String status;
 
+    //将来加密证书的文件夹
+    @Column
+    private String encryptpassword;
+
 
 
 }

@@ -35,7 +35,7 @@
         <div class="bt_login_boxs">
             <div class="title clearfix">
             	<img src="../../service/js/bootstrap/img/login/logo.png" alt=""/>
-            	<span>业务管理系统</span>
+            	<span>业务管理系统-注册</span>
             </div>
             <form class="m-t my-form" style="height: 440px" role="form" th:action="@{/ser/register}" method="post">
             	<div class="width_80" >
@@ -62,10 +62,10 @@
 	                </div>
 	                <label class="i-checks"><input type="checkbox" id="remb_me">&nbsp;记住用户名</label>
 	                <div class="clear"></div>
-	                <button id="J-submit" type="submit" class="btn btn-primary block full-width bt_login_bnt">注册</button>
+	                <button id="J-submit" type="submit" class="btn btn-primary block full-width bt_login_bnt">提交信息</button>
 
-                    <!--<p class="text-muted text-center"> <a href="login.html#"><small>忘记密码了？</small></a> | <a href="register.html">注册一个新账号</a>
-                    </p>-->
+                    <p class="text-muted text-center"> <a th:href="@{/ser/toLoginPage}"><small>已有帐号</small></a> | <a href="#">忘记密码了？</a>
+                    </p>
                 </div>
             </form>
         </div>

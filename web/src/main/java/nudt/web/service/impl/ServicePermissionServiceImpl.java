@@ -36,4 +36,10 @@ public class ServicePermissionServiceImpl implements nudt.web.service.ServicePer
 
         return pids;
     }
+
+    @Override
+    @Transactional
+    public void deleteByPAndPermissionId(Integer pid) {
+        servicePermissionRepository.deleteByPermissionId(pid);
+    }
 }

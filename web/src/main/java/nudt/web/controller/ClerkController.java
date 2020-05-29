@@ -136,23 +136,69 @@ public class ClerkController {
    }
 
    @RequestMapping(value = "/toAddUnitPage",method = {RequestMethod.GET,RequestMethod.POST})
-   public String toAddUnitPage(HttpServletRequest request,HttpServletResponse response){
+   public String toAddUnitPage(Map maps,HttpServletRequest request,HttpServletResponse response){
+
+       List<String> lists = new ArrayList<>();
+       lists.add("NUDT");
+       lists.add("NUD");
+       lists.add("MAS");
+       maps.put("ou",lists);
+
+       //查询有多少个业务系统
+       List<Service> serviceList = serviceService.findAll();
+       List<String> services = new ArrayList<>();
+       for(Service service:serviceList)
+       {
+           services.add(service.getServiceName());
+       }
+
+       services.add("个体终端");
+       maps.put("services",services);
+
 
         return "clerk/addPage";
    }
 
     @RequestMapping(value = "/addUnit",method = {RequestMethod.POST,RequestMethod.GET})
-   public String addUnit(Map map,Staff staff,HttpServletRequest request,HttpServletResponse response){
+   public String addUnit(Map map,StaffBen staffBen,HttpServletRequest request,HttpServletResponse response){
         //不能存在已经添加的个体组织，必须要username唯一
-        String username = staff.getUsername();
-       Staff st =  staffService.findStaffByUsername(username);
+        String username = staffBen.getUsername();
+        Staff st =  staffService.findStaffByUsername(username);
        if(null!=st){
             map.put("msg","个体组织已经通过网站注册申请，无需再次注册!");
             return "clerk/list";
 
        }
-        staffService.save(staff);
-        return "redirect:/clerk/emps";
+       else
+       {
+
+           Staff staff = new Staff();
+           staff.setCountrycode(staffBen.getCountrycode());
+           staff.setProvince(staffBen.getProvince());
+           staff.setCity(staffBen.getCity());
+           staff.setCounty(staffBen.getCounty());
+           staff.setEmail(staffBen.getEmail());
+           staff.setOrganization(staffBen.getOrganization());
+           staff.setDepartment(staffBen.getDepartment());
+           staff.setUsername(staffBen.getUsername());
+           staff.setPassword(staffBen.getPassword());
+           staff.setTelephone(staffBen.getTelephone());
+           staff.setAddress(staffBen.getAddress());
+           staff.setDescription(staffBen.getDescription());
+           staff.setCode(staffBen.getCode());
+
+           staff = staffService.save(staff);
+           //保存用户和业务系统之间的关系
+           ServiceStaff serviceStaff = new ServiceStaff();
+           Service service = serviceService.findServiceByServiceName(staffBen.getServiceName());
+           serviceStaff.setServiceId(service.getSid());
+           serviceStaff.setStaffId(staff.getId());
+           serviceStaffService.save(serviceStaff);
+
+           return "redirect:/clerk/emps";
+
+       }
+
 
     }
 

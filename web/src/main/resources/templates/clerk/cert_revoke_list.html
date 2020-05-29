@@ -62,12 +62,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="crl:${crls}">
-                        <td></td>
+                    <tr th:each="crl,connectionStart:${crls}">
+                        <td th:text="${connectionStart.count}"></td>
                         <td  th:text="${crl.serialNumber}">第1行第1列</td>
                         <td th:text="${crl.isValidate}">第1行第2列</td>
                         <td th:text="${crl.createTime}">第1行第3列</td>
-
                     </tr>
                     </tbody>
                 </table>
@@ -75,6 +74,9 @@
 
         </main>
     </div>
+
+
+
 </div>
 
 <!-- Bootstrap core JavaScript

@@ -9,10 +9,12 @@
           media="all" />
     <script type="text/javascript" src="../../cert/layui/layui.all.js"></script>
     <script type="text/javascript" src="../../cert/js/jquery-1.11.3.min.js"></script>
-    <link href="../../cert/css/create.css" rel="stylesheet" type="text/css" />
+
     <link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}" rel="stylesheet">
     <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
     <script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+
+
 
     <script type="text/javascript">
 
@@ -34,7 +36,7 @@
 
         .container {
             margin-top: 15%;
-            width: 35%;
+            width: 50%;
         }
 
         .btn-primary {
@@ -44,6 +46,7 @@
 
         .form-control {
             margin-bottom: 4px;
+
         }
 
     </style>
@@ -53,30 +56,52 @@
 <iframe src="/api/toHeaderPage" height="50px" width="1200px" frameborder="no" border="0" marginheight="100px"  scrolling="no" ></iframe>
 
 
-<div class="container">
+<div  class="container">
     <form th:action="@{/api/certFroze}" method="post">
-        <div class="form-signin" >
+        <div class="form-signin"  >
+
+            <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.caType}" type="hidden" name="caType"  lay-verify="date" placeholder="" autocomplete="off" >
+
             <!--<h2 class="form-signin-heading">注册</h2>-->
             <!-- class="sr-only"将label标签隐藏 -->
-            <span th:if="${msg} ne null" th:value="${msg}"   ></span>
+                   <span th:if="${msg} ne null" th:value="${msg}"   ></span>
 
-            <label  class="sr-only">用户名</label>
-            <input readonly="readonly" type="text" th:if="${cert} ne null" th:value="${cert.username}" class="form-control" name="username" placeholder="用户名">
-            <label  class="sr-only">证书序列号</label>
-            <input name="serialNumber" th:if="${cert} ne null" th:value="${cert.serialNumber}" type="text" class="form-control"  placeholder="">
 
-            <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.notBefore}" type="text" name="notBefore"  lay-verify="date" placeholder="请输入证书生效日期" autocomplete="off" class="layui-input">
 
-            <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.notAfter}" type="text" name="notAfter"  lay-verify="date" placeholder="请输入证书截止日期" autocomplete="off" class="layui-input">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">用户名</span>
+                        <input readonly="readonly" type="text" th:if="${cert} ne null" th:value="${cert.username}" class="form-control" name="username" placeholder="用户名">
+                    </div>
 
-            <label  class="sr-only">证书状态</label>
-            <input name="status" readonly="readonly" type="text" th:if="${cert} ne null" th:value="${cert.status}" class="form-control"  placeholder="证书状态">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">序列号</span>
+                        <input readonly="readonly" name="serialNumber" th:if="${cert} ne null" th:value="${cert.serialNumber}" type="text" class="form-control"  placeholder="">
+                    </div>
 
-            <label  class="sr-only">冻结天数</label>
-            <input name="days" type="number" class="form-control"  placeholder="冻结时间">
-            <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.caType}" type="hidden" name="caType"  lay-verify="date" placeholder="请输入证书截止日期" autocomplete="off" class="layui-input">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">生效日</span>
+                        <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.notBefore}" type="text" name="notBefore" class="form-control" lay-verify="date" placeholder="证书生效日期" autocomplete="off" >
+                    </div>
 
-            <button class="btn btn-lg btn-primary btn-block" type="submit">冻结</button>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">截至日</span>
+                        <input readonly="readonly" th:if="${cert} ne null" th:value="${cert.notAfter}" type="text" name="notAfter" class="form-control" lay-verify="date" placeholder="证书截止日期" autocomplete="off" >
+                    </div>
+
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">状态码</span>
+                        <input name="status" readonly="readonly" type="text" th:if="${cert} ne null" th:value="${cert.status}" class="form-control"  placeholder="证书状态">
+                    </div>
+
+                   <div class="input-group input-group-lg">
+                      <span class="input-group-addon">冻结日</span>
+                      <input name="days" type="number" class="form-control"  placeholder="冻结时间">
+                   </div>
+
+
+                    <button style="margin-top: 15px" class="btn btn-primary btn-lg btn-block" type="submit">冻结证书</button>
+                    <!--/<button style="margin-top: 15px" class="btn btn-primary btn-lg btn-block" type="reset">重置</button>-->
+
         </div>
     </form>
 </div>

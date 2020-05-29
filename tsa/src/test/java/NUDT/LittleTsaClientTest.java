@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @desc 客户端测试
  * @date 2019/7/10
  */
+/*
 public class LittleTsaClientTest {
     private TsaClient tsaClient;
 
@@ -31,3 +32,4 @@ public class LittleTsaClientTest {
         System.out.println(sha256);
     }
 }
+*/

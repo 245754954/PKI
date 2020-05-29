@@ -1,0 +1,7 @@
+{
+  "port": 12080,
+  "serverPort": 12081,
+  "serverHost": "127.0.0.1",
+  "password": "123456",
+  "encryptMethod": "AES"
+}

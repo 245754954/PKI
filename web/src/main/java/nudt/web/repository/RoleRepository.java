@@ -27,4 +27,6 @@ public interface RoleRepository extends JpaRepository<Role,Integer> {
 
   public List<Role> findRolesByIdIn(List<Integer> rids);
 
+
+
 }

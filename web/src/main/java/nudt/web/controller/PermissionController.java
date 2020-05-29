@@ -2,10 +2,7 @@ package nudt.web.controller;
 
 
 import nudt.web.entity.*;
-import nudt.web.service.PermissionService;
-import nudt.web.service.RolePermissionService;
-import nudt.web.service.ServicePermissionService;
-import nudt.web.service.ServiceService;
+import nudt.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +35,15 @@ public class PermissionController {
     @Autowired
     ServicePermissionService servicePermissionService;
 
+    @Autowired
+    ServiceRoleService serviceRoleService;
+
 
     @RequestMapping(value = "/permission",method = {RequestMethod.POST,RequestMethod.GET})
-    public String toPermissionPage(){
+    public String toPermissionPage(Model model){
 
+
+        model.addAttribute("card","授权管理 - 权限维护");
         return "authorization/permission/index";
     }
 
@@ -218,11 +220,20 @@ public class PermissionController {
     }
 
 
+    //得到可以分配的权限信息
     @ResponseBody
     @RequestMapping("/loadAssignData")
     public Object loadAssignData( Integer roleid ) {
+        //得到角色所隶属的业务系统
+        List<Integer> serviceIDS = serviceRoleService.findServiceIdsByRoleId(roleid);
+
+        //得到各个业务系统下的权限信息
+        List<Integer> pids = servicePermissionService.findPermissionIdsByServiceIDs(serviceIDS);
+
+
         List<Permission> permissions = new ArrayList<Permission>();
-        List<Permission> ps = permissionService.findAll();
+        //根据pids得到权限信息
+        List<Permission> ps = permissionService.findPermissionsByPid(pids);
 
         // 获取当前角色已经分配的许可信息
         List<RolePermission> rolePermissions =rolePermissionService.findAllByRid(roleid);
@@ -232,6 +243,7 @@ public class PermissionController {
         {
             permissionids.add(r.getPid());
         }
+
         Map<Integer, Permission> permissionMap = new HashMap<Integer, Permission>();
         for (Permission p : ps) {
             if ( permissionids.contains(p.getId()) ) {
@@ -241,6 +253,7 @@ public class PermissionController {
             }
             permissionMap.put(p.getId(), p);
         }
+
         for ( Permission p : ps ) {
             Permission child = p;
             if ( child.getPid() == 0 ) {
@@ -281,12 +294,16 @@ public class PermissionController {
     {
 
 
+
         String serviceName = (String) session.getAttribute("serviceName");
+        if(null==serviceName)
+        {
+            return "redirect:/ser/toAddMenuPage";
+        }
 
         Service service =serviceService.findServiceByServiceName(serviceName);
 
         Permission permission = new Permission();
-
         permission.setPid(pcode);
         permission.setUrl(url);
         permission.setName(name);
@@ -301,8 +318,28 @@ public class PermissionController {
         sp.setPermissionId(permission.getId());
 
         servicePermissionService.save(sp);
+
         return "redirect:/ser/toAddMenuPage";
     }
+
+    //创建一个权限的相关信息
+
+    @RequestMapping(value = "/delInfo",method = {RequestMethod.POST,RequestMethod.GET})
+    public String  delInfo(HttpSession session, @RequestParam("id") Integer id)
+    {
+        if(null==id)
+        {
+            return "redirect:/ser/toAddMenuPage";
+        }
+        //删除权限的id
+        permissionService.deletePermissionById(id);
+        //删除权限和业务系统之间的关系servicepermission
+        servicePermissionService.deleteByPAndPermissionId(id);
+
+        return "redirect:/ser/toAddMenuPage";
+    }
+
+
 
 
 

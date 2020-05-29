@@ -2,10 +2,7 @@ package nudt.web.controller;
 
 
 import nudt.web.entity.*;
-import nudt.web.service.RolePermissionService;
-import nudt.web.service.RoleService;
-import nudt.web.service.ServiceRoleService;
-import nudt.web.service.ServiceService;
+import nudt.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +34,9 @@ public class RoleController {
     @Autowired
     ServiceService serviceService;
 
+
+    @Autowired
+    ServicePermissionService servicePermissionService;
 
     //到达用user主界面
     @RequestMapping(value = "/toRolePage",method = {RequestMethod.POST,RequestMethod.GET})
@@ -83,7 +83,7 @@ public class RoleController {
         model.addAttribute("services",services);
 
 
-
+        model.addAttribute("card","授权管理 - 角色维护");
         //使用limit 需要两个参数，start和size
         return  "authorization/role/index";
     }
@@ -381,8 +381,11 @@ public class RoleController {
 
 
 
+    //只能分配该角色所隶属业务系统的角色系统
     @RequestMapping("/assign")
     public String assign(Integer id,Model model) {
+
+
 
         Role r = roleService.findRoleById(id);
         model.addAttribute("role",r);
@@ -436,9 +439,11 @@ public class RoleController {
             }
 
             result.setSuccess(true);
+            result.setData("000");
         } catch ( Exception e ) {
             e.printStackTrace();
             result.setSuccess(false);
+            result.setData("111");
         }
 
         return result;

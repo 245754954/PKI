@@ -42,6 +42,11 @@ public class ServiceStaffServiceImpl implements ServiceStaffService {
         return staffids;
     }
 
+    @Override
+    public List<ServiceStaff> findAllByStaffId(Integer staffid) {
+        return serviceStaffRepository.findAllByStaffId(staffid);
+    }
+
     //根据staffid删除service和staff之间的所属关系
 
 }

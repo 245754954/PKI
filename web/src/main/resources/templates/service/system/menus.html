@@ -44,6 +44,8 @@ $(document).ready(function(){
 		    });
 			return;
 		}
+
+
 		swal({
 	        title: "您确定要"+msg+"这个菜单或按钮吗",
 	        text: status=="1" ? msg : "停用后将无法使用此菜单或按钮，请谨慎操作！",
@@ -59,7 +61,9 @@ $(document).ready(function(){
 	
 	// 改变菜单状态操作
 	function changeStatus(status, msg){
-		var url = "/micromvc/uc/menuList/delInfo";
+
+
+		var url = "/per/delInfo";
 		$.post(url, {"id" : $("#id").val(), "status" : status}, function(data, status) {
 			if (status == "success") {
 				swal(msg + "成功！", "操作成功!", "success");
@@ -275,7 +279,7 @@ var setting = {
                             <div class="ibox-title">
                                 <a data-toggle="modal" class="btn btn-success" href="#modal-form" onclick="return Adduser();"><i class="fa fa-plus"></i>添加</a>
                                 <a data-toggle="modal" class="btn btn-warning" id="disable"><i class="fa fa-times"></i>停用</a>
-                                <a data-toggle="modal" class="btn btn-primary" id="enabled"><i class="fa fa-check"></i>启用</a>
+                                <!--<a data-toggle="modal" class="btn btn-primary" id="enabled"><i class="fa fa-check"></i>启用</a>-->
                             </div>
                             <div class="ibox-content">
                                 <ul id="tree" class="ztree"></ul>

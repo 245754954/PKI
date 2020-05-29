@@ -13,7 +13,10 @@
     <module>web</module>
     <module>core</module>
     <module>tsa</module>
-      <module>tcp</module>
+    <module>common</module>
+    <module>clientproxy</module>
+    <module>JGateWayProxy</module>
+    <module>RGateWayProxy</module>
   </modules>
 
 
@@ -23,12 +26,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
+    <netty.version>4.1.25.Final</netty.version>
+    <slf4j.version>1.7.21</slf4j.version>
     <spring-cloud.version>Dalston.SR1</spring-cloud.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <skipTests>false</skipTests>
     <bc.version>1.60</bc.version>
-
+    <fastjson.version>1.2.61</fastjson.version>
     <!--//分页的版本-->
     <mybatis-pagehelper.version>4.1.2</mybatis-pagehelper.version>
 
@@ -140,6 +145,11 @@
       <artifactId>spring-boot-devtools</artifactId>
       <optional>true</optional>
     </dependency>
+
+
+
+
+
   </dependencies>
 
   <build>

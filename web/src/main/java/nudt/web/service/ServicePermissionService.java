@@ -10,4 +10,6 @@ public interface ServicePermissionService {
     public ServicePermission save(ServicePermission servicePermission);
 
     public List<Integer> findPermissionIdsByServiceIDs(List<Integer> serviceids);
+
+    public void deleteByPAndPermissionId(Integer pid);
 }

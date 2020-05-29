@@ -8,4 +8,7 @@ import java.util.List;
 public interface ServicePermissionRepository extends JpaRepository<ServicePermission ,Integer> {
 
         public List<ServicePermission>  findServicePermissionsByServiceIdIn(List<Integer> ids);
+
+
+        public void deleteByPermissionId(Integer pid);
 }

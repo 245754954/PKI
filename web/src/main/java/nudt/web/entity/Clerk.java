@@ -6,6 +6,7 @@ import org.springframework.ldap.odm.annotations.*;
 
 import javax.naming.Name;
 //@Id标注的是这个实体的DN，@Attribute表明这是objectClass的一个属性，@Dnattribute标注的属性都是属于自动构建DN时的一部分
+/*
 @Data
 @ToString
 @Entry(base = "ou=taobao",objectClasses = { "person",  "top" })
@@ -29,4 +30,4 @@ public class Clerk {
 
     @Attribute(name="description")
     private String description;
-}
+}*/

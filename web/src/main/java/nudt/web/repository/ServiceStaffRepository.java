@@ -11,4 +11,6 @@ public interface ServiceStaffRepository extends JpaRepository<ServiceStaff,Integ
 
     public List<ServiceStaff> findAllByServiceId(Integer serviceid);
 
+    public List<ServiceStaff> findAllByStaffId(Integer staffid);
+
 }

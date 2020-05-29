@@ -46,6 +46,9 @@ public class StaffController {
     @Autowired
     ServiceService serviceService;
 
+    @Autowired
+    ServiceRoleService serviceRoleService;
+
     @RequestMapping(value = "/find",method = {RequestMethod.GET,RequestMethod.POST})
     public void findAll(){
 
@@ -92,6 +95,8 @@ public class StaffController {
 
 
         model.addAttribute("totalno",totalpage);
+
+        model.addAttribute("card","授权管理 - 用户维护");
         //使用limit 需要两个参数，start和size
         return "authorization/user/user";
     }
@@ -99,7 +104,25 @@ public class StaffController {
 
     //到达添加用户的界面
     @RequestMapping(value = "/toAddUserPage",method = {RequestMethod.POST,RequestMethod.GET})
-    public String toAddUserPage(){
+    public String toAddUserPage(Map maps){
+
+        List<String> lists = new ArrayList<>();
+        lists.add("NUDT");
+        lists.add("NUD");
+        lists.add("MAS");
+        maps.put("ou",lists);
+
+        //查询有多少个业务系统
+        List<Service> serviceList = serviceService.findAll();
+        List<String> services = new ArrayList<>();
+        for(Service service:serviceList)
+        {
+            services.add(service.getServiceName());
+        }
+
+        services.add("个体终端");
+        maps.put("services",services);
+
 
         return "authorization/user/add";
     }
@@ -200,16 +223,38 @@ public class StaffController {
 
     @ResponseBody
     @RequestMapping("/insert")
-    public Object insert(Staff staff ) {
+    public Object insert(Map map,StaffBen staffBen) {
         AJAXResult result = new AJAXResult();
-
-        try {
-            staffService.save(staff);
-
-            result.setSuccess(true);
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        //先看看是否已经存在该用户
+        Staff s = staffService.findStaffByUsername(staffBen.getUsername());
+        if (null != s) {
             result.setSuccess(false);
+        }
+        else
+        {
+            Staff staff = new Staff();
+            staff.setCountrycode(staffBen.getCountrycode());
+            staff.setProvince(staffBen.getProvince());
+            staff.setCity(staffBen.getCity());
+            staff.setCounty(staffBen.getCounty());
+            staff.setEmail(staffBen.getEmail());
+            staff.setOrganization(staffBen.getOrganization());
+            staff.setDepartment(staffBen.getDepartment());
+            staff.setUsername(staffBen.getUsername());
+            staff.setPassword(staffBen.getPassword());
+            staff.setTelephone(staffBen.getTelephone());
+            staff.setAddress(staffBen.getAddress());
+            staff.setDescription(staffBen.getDescription());
+            staff.setCode(staffBen.getCode());
+
+            staff = staffService.save(staff);
+            //保存用户和业务系统之间的关系
+            ServiceStaff serviceStaff = new ServiceStaff();
+            Service service = serviceService.findServiceByServiceName(staffBen.getServiceName());
+            serviceStaff.setServiceId(service.getSid());
+            serviceStaff.setStaffId(staff.getId());
+            serviceStaffService.save(serviceStaff);
+            result.setSuccess(true);
         }
 
         return result;
@@ -286,19 +331,26 @@ public class StaffController {
     public String assign( Integer id, Model model ) {
 
         Staff staff = staffService.findStaffById(id);
-
         model.addAttribute("staff", staff);
 
-        List<Role> roles =roleService.findAll();
+        //查找到用户所隶属的业务系统
+        List<ServiceStaff> serviceStaffs = serviceStaffService.findAllByStaffId(id);
+        //查找到该业务系统下所有角色的信息
+        List<Integer> rids = serviceRoleService.findRidsByServiceID(serviceStaffs.get(0).getServiceId());
+
+
+        List<Role> roles =roleService.findRolesByIdIn(rids);
 
         List<Role> assingedRoles = new ArrayList<Role>();
         List<Role> unassignRoles = new ArrayList<Role>();
 
+
+        //得到用户已经分配到的角色
         List<StaffRole> staffRoles = staffRoleService.findAllBySid(id);
 
         // 获取关系表的数据
         List<Integer> roleids =new ArrayList<>();
-
+        //得到所有的隶属于
         for(StaffRole st:staffRoles)
         {
             roleids.add(st.getRid());

@@ -50,7 +50,7 @@
         <div class="bt_login_boxs">
             <div class="title clearfix">
             	<img src="../../service/js/bootstrap/img/login/logo.png" alt=""/>
-            	<span>业务管理系统</span>
+            	<span>业务管理系统-登录</span>
             </div>
             <form class="m-t my-form"  style="height: 420px" role="form" action="/ser/login" method="post">
             	<div class="width_80">
@@ -72,9 +72,9 @@
 	                <label class="i-checks"><input type="checkbox" id="remb_me">&nbsp;记住用户名</label>
 	                <div class="clear"></div>
 	                <button id="J-submit" type="submit" class="btn btn-primary block full-width bt_login_bnt">登 录</button>
-                    <button id="toRegisterPage" type="button" class="btn btn-primary block full-width bt_login_bnt">去注册</button>
-                    <!--<p class="text-muted text-center"> <a href="login.html#"><small>忘记密码了？</small></a> | <a href="register.html">注册一个新账号</a>
-                </p>-->
+                    <!--<button id="toRegisterPage" type="button" class="btn btn-primary block full-width bt_login_bnt">去注册</button>-->
+                    <p class="text-muted text-center"> <a href="#"><small>忘记密码了？</small></a> | <a th:href="@{/ser/toRegisterPage}">注册一个新账号</a>
+                </p>
                 </div>
             </form>
         </div>

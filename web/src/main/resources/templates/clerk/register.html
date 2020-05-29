@@ -39,10 +39,11 @@
 
 	<body class="text-center">
 		<form class="form-signin" th:action="@{/clerk/register}">
-			<img class="mb-4" th:src="@{../../clerk/asserts/img/bootstrap-solid.svg}"  alt="" width="72" height="72">
-			<h1 class="h3 mb-3 font-weight-normal" style="color: red" th:text="${ not #strings.isEmpty(msg)}?${msg}:'请注册'" >请注册</h1>
+			<img class="mb-4" th:src="@{../../clerk/asserts/img/icon.jpg}"  alt="" width="72" height="72">
+			<h1 class="h3 mb-4 font-weight-normal" style="color: red" th:text="${ not #strings.isEmpty(msg)}?${msg}:'终端用户登记注册'" >终端用户登记注册</h1>
 			<!--我们需要使用th:if标签判断msg是否为空，为空就不生成-->
 			<div class="input-group">
+				<span style="width: 70px" class="input-group-btn">国家</span>
 				<select name="countrycode"  class="btn btn-info form-control">
 					<option >
 						CN
@@ -51,44 +52,44 @@
 						US
 					</option>
 				</select>
-				<span style="width: 70px" class="input-group-btn">国家</span>
 			</div>
 
 			<div id="disSelect">
 					<div class="input-group">
-						<select name="province" class="btn btn-info form-control" id="province" data-province="四川省"></select>
 						<span style="width: 70px" class="input-group-btn">省</span>
+						<select name="province" class="btn btn-info form-control" id="province" data-province="四川省"></select>
+
 					</div>
 					<div class="input-group">
-						<select name="city" class="btn btn-info form-control" id="city" data-city="成都市"></select>
 						<span style="width: 70px" class="input-group-btn">市</span>
+						<select name="city" class="btn btn-info form-control" id="city" data-city="成都市"></select>
 					</div>
 					<div class="input-group">
-						<select name="county" class="btn btn-info form-control" id="county" data-county="龙泉驿区"></select>
 						<span style="width: 70px" class="input-group-btn">县</span>
+						<select name="county" class="btn btn-info form-control" id="county" data-county="龙泉驿区"></select>
 					</div>
 			</div>
 
 
 			<div class="input-group">
-				<input type="email" name="email" class="form-control" placeholder="email" required="">
 				<span style="width: 70px" class="input-group-btn">邮箱</span>
+				<input type="email" name="email" class="form-control" placeholder="email" required="">
 			</div>
 
 			<div class="input-group">
+				<span style="width: 70px" class="input-group-btn">组织</span>
 				<select name="organization"  class="btn btn-info form-control">
 					<option th:each="ou1:${ou}" th:text="${ou1}">
 					</option>
 				</select>
-				<span style="width: 70px" class="input-group-btn">组织</span>
 			</div>
 
 			<div class="input-group">
+				<span style="width: 70px" class="input-group-btn">隶属系统</span>
 				<select name="serviceName"  class="btn btn-info form-control">
 					<option th:each="service:${services}" th:text="${service}">
 					</option>
 				</select>
-				<span style="width: 70px" class="input-group-btn">隶属系统</span>
 			</div>
 
 			<!--<div class="input-group">-->
@@ -97,36 +98,33 @@
 			<!--</div>-->
 
 			<div class="input-group">
-				<input type="text" name="department" class="form-control" placeholder="department" required="">
 				<span style="width: 70px" class="input-group-btn">单位</span>
+				<input type="text" name="department" class="form-control" placeholder="department" required="">
 			</div>
 
 			<div class="input-group">
-				<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
 				<span style="width: 70px" class="input-group-btn" >用户名</span>
+				<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
 			</div>
 
 			<div class="input-group">
-				<input type="password" name="password" class="form-control" placeholder="Password" required="">
 				<span style="width: 70px" class="input-group-btn">密码</span>
+				<input type="password" name="password" class="form-control" placeholder="Password" required="">
 			</div>
 
 			<div class="input-group">
-				<input type="number" name="telephone" class="form-control" placeholder="telephone" required="">
 				<span style="width: 70px" class="input-group-btn">电话号码</span>
+				<input type="number" name="telephone" class="form-control" placeholder="telephone" required="">
 			</div>
 
 			<div class="input-group">
-				<input type="text" name="address" class="form-control" placeholder="address" required="">
 				<span style="width: 70px" class="input-group-btn">地址</span>
+				<input type="text" name="address" class="form-control" placeholder="address" required="">
 			</div>
 
 
-			<button style="width: 400px" class="btn btn-sm btn-primary btn-block" type="submit">注册</button>
-			<button style="width: 400px" id="gosign" class="btn btn-sm btn-primary btn-block" >去登录</button>
-			<p class="mt-5 mb-3 text-muted">© 2017-2018</p>
-			<a class="btn btn-sm">中文</a>
-			<a class="btn btn-sm">English</a>
+			<button style="width: 400px;margin-left:70px" class="btn btn-sm btn-primary btn-block" type="submit">注册</button>
+			<button style="width: 400px;margin-left:70px" id="gosign" class="btn btn-sm btn-primary btn-block" >去登录</button>
 		</form>
 
 	</body>

@@ -44,6 +44,11 @@ public class StaffBen {
     //地址
     private String address;
 
+    //描述
+    private String description;
+
+    private Integer code;
+
 
 
 

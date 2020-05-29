@@ -27,7 +27,7 @@
 
 	<body class="text-center">
 		<form class="form-signin" th:action="@{/clerk/dashboard}">
-			<img class="mb-4" th:src="@{../../clerk/asserts/img/bootstrap-solid.svg}"  alt="" width="72" height="72">
+			<img class="mb-4" th:src="@{../../clerk/asserts/img/icon.jpg}"  alt="" width="72" height="72">
 			<h1 class="h3 mb-3 font-weight-normal">请登录</h1>
 			<!--我们需要使用th:if标签判断msg是否为空，为空就不生成-->
 
@@ -44,8 +44,9 @@
 			<button class="btn btn-sm btn-primary btn-block" type="submit">登录</button>
 			<div class="btn btn-sm btn-primary btn-block" id="register">注册</div>
 			<p class="mt-5 mb-3 text-muted">© 2017-2018</p>
-			<a th:href="@{/clerk/index}" class="btn btn-sm">管理员登录</a>
+			<a th:href="@{/clerk/index}" class="btn btn-sm">CA管理员登录</a>
 			<a th:href="@{/api/toLoginPage}" class="btn btn-sm">普通用户登录</a>
+			<a th:href="@{/ser/toLoginPage}" class="btn btn-sm">业务系统登录</a>
 		</form>
 
 	</body>

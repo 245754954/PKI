@@ -13,7 +13,8 @@
     <link href="../../service/js/bootstrap/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <!-- Sweet alert -->
     <script src="../../service/js/bootstrap/js/plugins/sweetalert/sweetalert.min.js"></script>
-    <script src="../../service/js/bootstrap/js/jquery-2.1.1.min.js"></script>
+
+	<script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
     <script src="../../service/js/jquery-browser.js"></script>
     <script src="../../service/js/bootstrap/js/bootstrap.min.js?v=3.4.0"></script>
     <script src="../../service/js/bootstrap/js/content.js?v=1.0.0"></script>
@@ -55,6 +56,10 @@ $(document).ready(function(){
 		}
 	};
 
+    function refresh() {
+        initTree();//重新加载树
+    }
+
 	function initTree() {
 
 		var url = "/ser/getPermissionWithRole";
@@ -65,7 +70,6 @@ $(document).ready(function(){
 			data:{"role_id":role_id},
 			success:function(data,status){
 					treeData=data.menus;
-					console.log(treeData);
 					$.fn.zTree.init($("#tree"),setting, changeUrlName(treeData));
 					zTree = $.fn.zTree.getZTreeObj("tree");
 					zTree.expandAll(true);
@@ -74,22 +78,21 @@ $(document).ready(function(){
 	}
 	
 	$('#save').click(function () {
-		var url = "<%=path%>/micromvc/uc/menuRole/createInfo";
+		var url = "/role/doAssign";
 		var nodes = zTree.getCheckedNodes(true);
-		var nodeIds = "";
+        var d = "roleid="+role_id;
 		for(var i=0;i<nodes.length;i++){
-			if(nodeIds != ""){
-				nodeIds+=",";	
-			}
-			nodeIds += nodes[i].code;
+
+            d += "&permissionids="+nodes[i].id
 		}
 		$.ajax({
 			url:url,
 			type:'post',
 			dataType:'json',
-			data:{"role_id":role_id,"menu_ids": nodeIds},
+			data:d,
 			success:function(data,status){
-				if (data.resultCode == "000") {
+
+				if (data.data == "000") {
 					swal("操作成功！", "操作成功!", "success");
 				}else{
 					swal("操作失败！", data.msg, "error");
@@ -109,6 +112,8 @@ $(document).ready(function(){
 
 	function changeUrlName(treeData){
 		var newtreeData;
+
+
 		for(note in treeData){
 			treeData[note].murl = treeData[note].url;	// url是关键字
 			delete treeData[note].url;
@@ -120,11 +125,8 @@ $(document).ready(function(){
 		return treeData;
 	}
 
-	function refresh() {
-	       initTree();//重新加载树
-	}      
 
-	//菜单树单击事件
+//菜单树单击事件
 	 function zTreeOnClick(event, treeId, treeNode) {
 	      var treeObj = $.fn.zTree.getZTreeObj("tree");
 	      var nodes = treeObj.getSelectedNodes();

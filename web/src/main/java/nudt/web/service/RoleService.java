@@ -44,4 +44,7 @@ public interface RoleService {
 
     //找到每一个roleid对应的业务服务器serviceName
     public List<RoleExtend> findRoleExtends(List<Role> roles);
+
+
+
 }

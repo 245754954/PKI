@@ -16,4 +16,7 @@ public interface ServiceStaffService {
 
     //根据service的id找到属于该service的所有staff 的id
     public List<Integer> findAllByServiceId(Integer serviceid);
+
+    //根据用户的id查找到他隶属于的业务系统
+    public List<ServiceStaff> findAllByStaffId(Integer staffid);
 }
