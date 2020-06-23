@@ -106,6 +106,8 @@ public class X509CertExtensions {
 //		certBuilder.addExtension(Extension.authorityKeyIdentifier, false,
 //				utils.createAuthorityKeyIdentifier(caPublicKey));
 		// 使用者密钥标识
+
+
 		certBuilder.addExtension(Extension.subjectKeyIdentifier, false,
 				utils.createSubjectKeyIdentifier(userPublicKey));
 		// 密钥用法

@@ -28,11 +28,16 @@ import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.crmf.CertRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,6 +88,8 @@ public class ApiController {
     @Autowired
     StaffRoleService staffRoleService;
 
+    @Autowired
+    UserService userService;
 
 
     /**
@@ -101,9 +108,6 @@ public class ApiController {
         Staff staff = staffService.findStaffByUsername(username);
 
         if(null!=staff&&staff.getUsername().equals(username)&&staff.getPassword().equals(password)&&1==staff.getCode()){
-
-
-
 
             //create a token
             String token = tokenManager.createToken(new HashMap<String, String>(), 30L, TimeUnit.MINUTES);
@@ -357,6 +361,29 @@ public class ApiController {
         //设置证书的状态
         certService.save(c);
 
+
+        //将证书的信息存储到apacheDS LDAP服务器
+        Staff staff = staffService.findStaffByUsername(username);
+        Name dn = LdapNameBuilder.newInstance()
+                .add("o","CA")
+                .add("ou", staff.getOrganization())
+                .build();
+
+         AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new EqualsFilter("cn",staff.getUsername()));
+        List<User> users = userService.search(dn.toString(),filter.encode());
+        //用户的证书信息没保存的话在进行保存，否则不保存
+        if(users.size()==0)
+        {
+
+            byte[] publicKey = CertUtil.readPublicKeyPem (pub_pem_path).getEncoded();
+            byte[] privateKey = CertUtil.readPrivateKeyPem(pri_pem_path).getEncoded();
+            byte[] p12 = CertUtil.readKeyStore(p12_path,"123456").getKey(userAlias,"123456".toCharArray()).getEncoded();
+            byte[] cert_byte = CertUtil.readX509Cert(cert_path).getEncoded();
+            userService.create(dn,staff.getUsername(),staff.getEmail(),staff.getUsername(),c.getAlgorithm(),p12,publicKey,privateKey,cert_byte);
+        }
+
         return ResultBuilder.buildOkResult(result);
     }
     @ResponseBody
@@ -395,7 +422,10 @@ public class ApiController {
             resp.setHeader("Content-type", "application/octet-stream");
             resp.setHeader("Content-Disposition",
                     "attachment;fileName=" + URLEncoder.encode(keyType.name+"_cert.zip","UTF-8"));
+
+
             resp.getOutputStream().write(FileUtils.readFileToByteArray(destZipFile));
+
 
         } catch (Exception e) {
             throw new SerialException("下载失败");
@@ -599,7 +629,7 @@ public class ApiController {
 
     //撤销用户的数字证书
     @RequestMapping(value = "/certRevoke" ,method = {RequestMethod.POST,RequestMethod.GET})
-    public String revokeCert(HttpServletResponse response,HttpServletRequest request) throws CertException {
+    public String revokeCert(HttpServletResponse response,HttpServletRequest request) throws CertException, InvalidNameException {
         //删除用户的数字证书信息
         Cookie[] cookies =  request.getCookies();
         String username ="";
@@ -639,14 +669,26 @@ public class ApiController {
         crl.setPubKey(publicKey.toString());
         crl.setSerialNumber(certificate.getSerialNumber().toString());
         crlService.Add(crl);
+
         //删除保存数字证书目录下的数字证书及其文件夹
         FileUtil.delFile(certDir);
 
+
+
         //将已经删除的证书加入到作为CRL列表，提供给他人查询
-
-
         //删除数据库的记录
         certService.deleteBySerialNumber(serialNumber);
+
+
+        //将LDAP数据库中的信息也删除
+        //将证书的信息存储到apacheDS LDAP服务器
+        Staff staff = staffService.findStaffByUsername(username);
+        Name dn = LdapNameBuilder.newInstance()
+                .add("o","CA")
+                .add("ou", staff.getOrganization())
+                .build();
+        dn.add("cn="+staff.getUsername());
+        userService.delete(dn);
 
         return "redirect:/api/toCertStatusPage";
     }

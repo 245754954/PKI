@@ -22,6 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socks.*;
 import io.netty.handler.codec.socksx.v5.DefaultSocks5PasswordAuthResponse;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
 
 
 @ChannelHandler.Sharable
@@ -41,29 +42,19 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksR
                 break;
             }
             case AUTH:
-                if(!ConstantS.falg)
-                {
                     SocksAuthRequest req1 = (SocksAuthRequest)socksRequest;
                     String username = req1.username();
                     String password = req1.password();
                     if(PasswordAuth.auth(username,password))
                     {
-                        ConstantS.falg=true;
-                        ConstantS.username=username;
-                        ConstantS.password=password;
+                        ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
+                        ctx.write(new SocksAuthResponse(SocksAuthStatus.SUCCESS));
                     }
-                }
-
-                if(ConstantS.falg)
-                {
-                    ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
-                    ctx.write(new SocksAuthResponse(SocksAuthStatus.SUCCESS));
-                }
-                else
-                {
-                    ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
-                    ctx.write(new SocksAuthResponse(SocksAuthStatus.FAILURE));
-                }
+                    else
+                    {
+                        ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
+                        ctx.write(new SocksAuthResponse(SocksAuthStatus.FAILURE));
+                    }
                 break;
             case CMD:
                 SocksCmdRequest req = (SocksCmdRequest) socksRequest;

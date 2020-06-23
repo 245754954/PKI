@@ -49,10 +49,11 @@ public class SSLSocketClient {
 
 
     public static SSLSocketFactory getSSLSocketFactory() throws IOException {
+
         //信任证书库jks
-        InputStream trust_input = new FileInputStream( (new ClassPathResource(KEY_STORE_TRUST_PATH).getFile() ));//服务器授信证书
+        InputStream trust_input = SSLSocketClient.class.getClassLoader().getResourceAsStream(KEY_STORE_TRUST_PATH);
         //自己的密钥库pkcs12
-        InputStream client_input = new FileInputStream( (new ClassPathResource(KEY_STORE_PATH)).getFile() );//客户端证书
+        InputStream client_input = SSLSocketClient.class.getClassLoader().getResourceAsStream(KEY_STORE_PATH);
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             KeyStore trustStore = KeyStore.getInstance(KEY_STORE_TYPE_JKS);

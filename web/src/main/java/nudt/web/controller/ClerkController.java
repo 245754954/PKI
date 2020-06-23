@@ -12,10 +12,13 @@ import nudt.web.repository.StaffRepository;
 import nudt.web.service.ServiceService;
 import nudt.web.service.ServiceStaffService;
 import nudt.web.service.StaffService;
+import nudt.web.service.UserService;
 import nudt.web.util.ContactAttributeMapperJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.query.LdapQuery;
 import org.springframework.ldap.support.LdapNameBuilder;
@@ -65,6 +68,9 @@ public class ClerkController {
     @Autowired
     ServiceStaffService serviceStaffService;
 
+    @Autowired
+    UserService userService;
+
     //我们用于测试自定义异常
     @ResponseBody
     @RequestMapping(value = "/hello",method = {RequestMethod.GET,RequestMethod.POST})
@@ -77,7 +83,6 @@ public class ClerkController {
     //首页跳转
     @RequestMapping(value = {"/index","index.html","/"})
    public String index(){
-
        return "clerk/index";
    }
 
@@ -257,26 +262,12 @@ public class ClerkController {
 
     //注册的请求
     @RequestMapping(value = "/register",method = {RequestMethod.POST,RequestMethod.GET})
-    public String register(HashMap map,StaffBen staffBen){
+    public String register(HashMap map,StaffBen staffBen) throws NamingException {
         //将接收到的数据注册到LDAP数据库
 
-//        System.out.println(clerk);
-//        //为待添加的数据构建dn
-//        Name dn = LdapNameBuilder.newInstance()
-//                .add("o", "CA")
-//                .add("ou",clerk.getOrganization())
-//                .add("cn",clerk.getUsername())
-//                .build();
-//        //构建属性
-//        Attributes attrs = new BasicAttributes();
-//        BasicAttribute ocattr = new BasicAttribute("objectclass");
-//        ocattr.add("top");
-//        ocattr.add("person");
-//        attrs.put(ocattr);
-//        attrs.put("cn", clerk.getUsername());
-//        attrs.put("sn", clerk.getUsername());
-//        attrs.put("userPassword",clerk.getPassword());
- //       ldapTemplate.bind(dn,null,attrs);
+
+
+
         Staff s = staffService.findStaffByUsername(staffBen.getUsername());
         if(null!=s){
             map.put("msg","用户已经存在");

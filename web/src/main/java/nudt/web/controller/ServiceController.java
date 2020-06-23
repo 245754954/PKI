@@ -60,7 +60,7 @@ public class ServiceController
 
         if(serviceService.findServiceByServiceName(service.getServiceName())!=null)
         {
-            return "/service/login";
+            return "service/login";
         }
         String ip  = RequestUtil.getUserIP(request);
         service.setServiceIP(ip);
@@ -83,7 +83,7 @@ public class ServiceController
         servicePermission.setServiceId(service.getSid());
         servicePermissionService.save(servicePermission);
 
-        return "/service/login";
+        return "service/login";
     }
     //接受登录请求
     @RequestMapping(value = "/login",method = {RequestMethod.POST,RequestMethod.GET})
@@ -93,12 +93,13 @@ public class ServiceController
         {
             session.setAttribute("serviceName",service1.getServiceName());
             session.setMaxInactiveInterval(1800);
-            request.setAttribute("serviceName",service.getServiceName());
-            return "/service/index-new";
+            model.addAttribute("serviceName",service.getServiceName());
+            //request.setAttribute("serviceName",service.getServiceName());
+            return "service/index-new";
         }else
         {
             model.addAttribute("serviceName","请登录！");
-            return "/service/login";
+            return "service/login";
         }
     }
 
@@ -218,7 +219,7 @@ public class ServiceController
 
 
             model.addAttribute("role_id",role_id);
-            return "/service/system/rolePermission";
+            return "service/system/rolePermission";
     }
 
 
@@ -438,7 +439,7 @@ public class ServiceController
     @RequestMapping(value = "/toPermissionPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toPermissionPage(HttpServletRequest request, Service service){
 
-        return "/service/layout/west2";
+        return "service/layout/west2";
     }
 
 
@@ -495,7 +496,7 @@ public class ServiceController
     public String toAddMenuPage(HttpSession session,HttpServletRequest request, Service service){
 
 
-        return "/service/system/menus";
+        return "service/system/menus";
     }
 
 
@@ -514,80 +515,80 @@ public class ServiceController
 
 
 
-        return "/service/system/roleManage";
+        return "service/system/roleManage";
     }
     @RequestMapping(value = "/toNorthPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toNorthPage(HttpServletRequest request, Service service){
-       return "/service/layout/north";
+       return "service/layout/north";
     }
     @RequestMapping(value = "/toWest2Page",method = {RequestMethod.POST,RequestMethod.GET})
     public String toWest2Page(HttpServletRequest request, Service service){
-        return "/service/layout/west2";
+        return "service/layout/west2";
     }
     @RequestMapping(value = "/toCenterPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toCenterPage(HttpServletRequest request, Service service){
-        return "/service/layout/center";
+        return "service/layout/center";
     }
     @RequestMapping(value = "/toWestMenuPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toWestMenuPage(HttpServletRequest request, Service service){
-        return "/service/layout/west_menu";
+        return "service/layout/west_menu";
     }
     @RequestMapping(value = "/toHomePage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toHomePage(HttpServletRequest request, Service service){
-        return "/service/layout/home";
+        return "service/layout/home";
     }
     @RequestMapping(value = "/toFormBasicPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toFormBasicPage(HttpServletRequest request, Service service){
-        return "/service/demo/form_basic";
+        return "service/demo/form_basic";
     }
     @RequestMapping(value = "/toFormValidatePage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toFormValidatePage(HttpServletRequest request, Service service){
-        return "/service/demo/form_validate";
+        return "service/demo/form_validate";
     }
     @RequestMapping(value = "/toTableJqgridPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toTableJqgridPage(HttpServletRequest request, Service service){
-        return "/service/demo/table_jqgrid";
+        return "service/demo/table_jqgrid";
     }
     @RequestMapping(value = "/toLayerdatePage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toLayerdatePage(HttpServletRequest request, Service service){
-        return "/service/demo/layerdate";
+        return "service/demo/layerdate";
     }
     @RequestMapping(value = "/toSweetalertPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toSweetalertPage(HttpServletRequest request, Service service){
-        return "/service/demo/sweetalert";
+        return "service/demo/sweetalert";
     }
     @RequestMapping(value = "/toToastrNotificationsPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toToastrNotificationsPage(HttpServletRequest request, Service service){
-        return "/service/demo/toastr_notifications";
+        return "service/demo/toastr_notifications";
     }
     @RequestMapping(value = "/toButtonsPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toButtonsPage(HttpServletRequest request, Service service){
-        return "/service/demo/buttons";
+        return "service/demo/buttons";
     }
     @RequestMapping(value = "/toSpinnersPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toSpinnersPage(HttpServletRequest request, Service service){
-        return "/service/demo/spinners";
+        return "service/demo/spinners";
     }
     @RequestMapping(value = "/toIconsPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toIconsPage(HttpServletRequest request, Service service){
-        return "/service/demo/icons";
+        return "service/demo/icons";
     }
     @RequestMapping(value = "/toFormFileUploadPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toFormFileUploadPage(HttpServletRequest request, Service service){
-        return "/service/demo/form_file_upload";
+        return "service/demo/form_file_upload";
     }
     @RequestMapping(value = "/toGraphEchartsPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toGraphEchartsPage(HttpServletRequest request, Service service){
-        return "/service/demo/graph_echarts";
+        return "service/demo/graph_echarts";
     }
     @RequestMapping(value = "/toExamplePagePage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toExamplePagePage(HttpServletRequest request, Service service){
-        return "/service/demo/example_page";
+        return "service/demo/example_page";
     }
 
     @RequestMapping(value = "/toListDictionaryPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toListDictionaryPage(HttpServletRequest request, Service service){
-        return "/service/demo/listDictionary";
+        return "service/demo/listDictionary";
     }
     @RequestMapping(value = "/toLoginPage",method = {RequestMethod.POST,RequestMethod.GET})
     public String toLoginPage()

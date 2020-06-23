@@ -22,8 +22,7 @@ spring:
     username: root
     password: 123456
     #url: jdbc:mysql://192.168.43.108:3306/jdbc
-    url: jdbc:mysql://192.168.1.106:3306/jdbc
-
+    url: jdbc:mysql://192.168.20.7:3306/jdbc
     driver-class-name: com.mysql.jdbc.Driver
   #配置jpa的数据库表生成方式
   jpa:
@@ -51,8 +50,10 @@ server:
     #keyStore密钥库，存放了服务端证书的私钥、公钥和证书。采用pkcs12格式存储
     #这个证书客户端浏览器在访问服务器时会发送给客户端浏览器
     key-store: classpath:rsa_server.p12
+    #key-store: classpath:ecdsa_server.p12
     key-store-password: 123456
     key-alias: rsa_server
+    #key-alias: ecdsa_server
     key-store-type: PKCS12
     enabled: true
     # trustStore信任库，存放了服务端信任的客户端证书的公钥文件
@@ -63,6 +64,7 @@ server:
     #切记在windows下面，客户端证书的安装一定要安装client.p12格式，而不是client.cer
     #keytool -import -v -file ca.cer -keystore trust.keystore //将根CA的证书导入就好了
     trust-store: classpath:rsa_trust.keystore
+    #trust-store: classpath:ecdsa_trust.keystore
     trust-store-password: 123456
     trust-store-type: JKS
     trust-store-provider: SUN

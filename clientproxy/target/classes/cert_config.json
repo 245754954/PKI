@@ -1,7 +1,0 @@
-{
-  "keyStorePassword": "123456",
-  "keyStoreTrustPassword": "123456",
-  "keyStorePath": "clientproxy.p12",
-  "keyStoreTrustPath": "trust.keystore"
-
-}

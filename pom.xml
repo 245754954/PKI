@@ -33,6 +33,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <skipTests>false</skipTests>
     <bc.version>1.60</bc.version>
+    <lang3.version>3.9</lang3.version>
     <fastjson.version>1.2.61</fastjson.version>
     <!--//分页的版本-->
     <mybatis-pagehelper.version>4.1.2</mybatis-pagehelper.version>
@@ -52,6 +53,15 @@
   </parent>
 
   <dependencies>
+
+    <!--StringUtils使用的所依赖-->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${lang3.version}</version>
+    </dependency>
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -153,18 +163,32 @@
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+
       <plugins>
+
+
+        <!--进行数字证书读取的插件，ECDSA，SM2-->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <configuration><encoding>UTF-8</encoding>
+            <!-- 过滤后缀为pem、pfx的证书文件 -->
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>cer</nonFilteredFileExtension>
+              <nonFilteredFileExtension>pem</nonFilteredFileExtension>
+              <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
+        </plugin>
+
+
+
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
+
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
@@ -195,6 +219,6 @@
           <version>3.0.0</version>
         </plugin>
       </plugins>
-    </pluginManagement>
+
   </build>
 </project>

@@ -10,10 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
-/**
- * @author jqChan
- * @date 2018/6/13
- */
+
 public class JGateWay {
 
 

@@ -1,6 +1,7 @@
 package example.ca;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -40,6 +41,7 @@ public class RSACATestExample {
 			File clientProxyDir=new File(baseCertPath+"clientProxy");
 			File JGateWayProxyDir=new File(baseCertPath+"jGateWayProxy");
 			File RGateWayProxyDir=new File(baseCertPath+"rGateWayProxy");
+			File xiaoyangDir=new File(baseCertPath+"xiaoyang");
 			if(!baseFileDir.exists()) {
 				baseFileDir.mkdirs();
 			}
@@ -69,6 +71,11 @@ public class RSACATestExample {
 			{
 				RGateWayProxyDir.mkdirs();
 			}
+
+			if(!xiaoyangDir.exists())
+			{
+				xiaoyangDir.mkdirs();
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,6 +93,9 @@ public class RSACATestExample {
 	
 	// 用户证书 私钥存储地址
 	static String caPrivatePath=baseCertPath+"ca/rsa_ca_pri.pem";
+
+	static String xiaoyangDN="C=CN,CN=BOB,O=OG";
+
 	//用户证书的DN
 	static String userDN="CN=rsa_client,OU=接入网关下的终端用户,O=接入网关,L=HuNan,ST=ChangSha";
 	//服务器证书，由根证书签发数字证书
@@ -121,6 +131,7 @@ public class RSACATestExample {
 		PrivateKey privateKey = CertUtil.readPrivateKeyPem(caPrivatePath);
 		//给用户创建证书
 		testRSA(CACert, privateKey, userDN);
+
 		//创建服务器的证书，该证书由CA签名
 		testRSAServer(CACert,privateKey,serverDN);
 		//客户端代理证书
@@ -129,6 +140,9 @@ public class RSACATestExample {
 		testRSAJGateWay(CACert,privateKey,jGateWayProxyDN);
 		//融合交换网关证书
 		testRSARGateWay(CACert,privateKey,rGateWayProxyDN);
+
+
+		testXiaoyang(CACert,privateKey,xiaoyangDN);
 	}
 	/**
 	 * 创建初始CA
@@ -154,6 +168,34 @@ public class RSACATestExample {
 		CertUtil.savePKCS12(makeUserSelfSignCert, keyPair.getPrivate(), "rsa_ca", "123456", caPKCS12savepath);
 
 	}
+
+
+
+	public static void testXiaoyang(X509Certificate CACert, PrivateKey privateKey,String xiaoyangDN) throws Exception {
+		ICA ica=new CAImpl();
+		//配置根CA的证书和私钥
+		ica.config(CACert,privateKey);
+		KeyPair keyPair = testCreateKeyPair();
+		Date notBefore=new Date();
+		Calendar instance = Calendar.getInstance();
+		instance.add(Calendar.YEAR, 20);
+		Date notAfter=instance.getTime();
+		String serialNumber1 = String.valueOf(System.currentTimeMillis());
+		BigInteger serialNumber=new BigInteger(serialNumber1);
+		String signAlg= "SHA256withRSA";
+		//给用户签发证书
+		X509Certificate x509Certificate = ica.makeUserCert(keyPair.getPublic(), CACert.getIssuerDN().toString(), xiaoyangDN, notBefore, notAfter, serialNumber, signAlg);
+		//保存为用户签发的一系列证书文件，包括用户的公钥私钥等等
+		CertUtil.saveX509CertBase64(x509Certificate, baseCertPath+"xiaoyang/fangxiaoyang_base64.cer");
+		CertUtil.saveX509CertBinary(x509Certificate, baseCertPath+"xiaoyang/fangxiaoyang.cer");
+		CertUtil.savePrivateKeyPem(keyPair.getPrivate(), baseCertPath+"xiaoyang/fangxiaoyang_pri.pem");
+		CertUtil.savePublicKeyPem(keyPair.getPublic(), baseCertPath+"xiaoyang/fangxiaoyang_pub.pem");
+		//将用户的相关信息以别名的形式进行存储，存储到密钥库
+		CertUtil.savePKCS12(x509Certificate, keyPair.getPrivate(), "fangxiaoyang", "123456", baseCertPath+"xiaoyang/fangxiaoyang.p12");
+
+		System.out.println(CertUtil.verifyUserCert(x509Certificate, CACert.getPublicKey()));
+	}
+
 
 	//创建接入网关证书
 	public static void testRSAJGateWay(X509Certificate CACert, PrivateKey privateKey,String jGateWayDN) throws Exception {

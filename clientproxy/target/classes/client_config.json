@@ -1,8 +1,0 @@
-{
-  "localPort": 11081,
-  "serverPort": 12080,
-  "serverHost": "127.0.0.1",
-  "password": "123456",
-  "encryptMethod": "AES"
-
-}

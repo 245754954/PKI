@@ -50,12 +50,26 @@ public class PasswordAuth {
 
     //验证用户是否注册和激活，这里根据服务器提供的接口验证，但是服务器需要验证客户端的证书，因此需要加载客户端证书
 	public static  boolean auth(String user, String password) throws IOException {
+        if(null==user||password==null||"".equals(user)||"".equals(password))
+        {
+            return false;
+        }
 
+        if("hcl".equals(user)||"wch".equals(user)||"nl".equals(user)||"zfc".equals(user)||"zfx".equals(user)||"云天明".equals(user)||"逻辑".equals(user)||"叶文洁".equals(user))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+        /*
 	    OkHttpClient.Builder builder = new OkHttpClient.Builder();
 	    builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
         //验证服务器证书是否合法
 	    builder.hostnameVerifier(getTrustedVerifier());
-	    Request request = new Request.Builder().url("https://127.0.0.1:8081/auth/auth_user?username=" + user + "&password=" + password).build();
+	    Request request = new Request.Builder().url("https://192.168.1.103:8081/auth/auth_user?username=" + user + "&password=" + password).build();
 
         OkHttpClient client = builder.build();
         Response response = client.newCall(request).execute();
@@ -89,6 +103,8 @@ public class PasswordAuth {
 //        {
 //            return false;
 //        }
+
+*/
     }
 
 
